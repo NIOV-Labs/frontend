@@ -67,3 +67,25 @@ export async function createPDF(data) {
     throw error;
   }
 }
+
+export async function fetchABTs(ids) {
+  try {
+    const queryString = ids.join('&tokenIds=');
+    const response = await fetch(`${BASE_URL}/tokens?tokenIds=${queryString}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error getting ABT info:', error);
+    throw error;
+  }
+}

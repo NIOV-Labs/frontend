@@ -55,7 +55,7 @@ function App() {
         balanceInEther,
         nativeCurrency
       })
-      loadContracts(client.account)
+      loadContracts(provider)
   };
 
   const loadContracts = async (signer) => {
