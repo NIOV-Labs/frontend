@@ -1,6 +1,6 @@
 import PageHeader from "../components/PageHeader"
 
-const Marketplace = () => {
+const Marketplace = ({ abt, market, client}) => {
   return (
     <div>
       <PageHeader title={'Marketplace'} />
