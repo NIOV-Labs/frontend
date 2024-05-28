@@ -12,6 +12,10 @@ import Developer from './Developer';
 import Support from './Support';
 import ABTDetails from './ABTDetails';
 import chainConfig from '../../utils/ChainConfig.json'
+import Addresses from '../../utils/deploymentMap/31337.json'
+import ABTAbi from '../../utils/interfaces/AssetBoundToken.json'
+import MarketAbi from '../../utils/interfaces/NiovMarket.json'
+import { formatUnits } from 'ethers';
 
 function App() {
   const [client, setClient] = useState({
@@ -21,6 +25,8 @@ function App() {
       provider: null
   });
   const [hasWeb3, setHasWeb3] = useState(false);
+  const [abt, setAbt] = useState({})
+  const [market, setMarket] = useState([])
 
   const web3Handler = async () => {
       var account; var chainId;
@@ -33,9 +39,9 @@ function App() {
       .then((res) => {
         chainId = res });
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.BrowserProvider(window.ethereum);
       const balance = await provider.getBalance(account);
-      let balanceInEther = ethers.utils.formatEther(balance);
+      let balanceInEther = formatUnits(balance, 'ether');
       balanceInEther = Math.floor(balanceInEther)
       
       const signer = await provider.getSigner();
@@ -49,8 +55,15 @@ function App() {
         balanceInEther,
         nativeCurrency
       })
-      
+      loadContracts(client.account)
   };
+
+  const loadContracts = async (signer) => {
+    const abtContract = new ethers.Contract(Addresses.AssetBoundToken, ABTAbi.abi, signer);
+    const marketContract = new ethers.Contract(Addresses.NiovMarket, MarketAbi.abi, signer);
+    setAbt(abtContract)
+    setMarket(marketContract)
+  }
 
   const getNativeCurrency = (chainId) => {
     for (const key in chainConfig) {
@@ -81,7 +94,7 @@ function App() {
               <Routes>
                 <Route path="/dashboard"  element={<Dashboard client={client}/>}/>
                 <Route path="/abts"  element={<ABTsProject client={client}/>}/>
-                <Route path="/marketplace"  element={<Marketplace client={client}/>}/>
+                <Route path="/marketplace"  element={<Marketplace client={client} market={market} abt={abt} />}/>
                 <Route path="/myWallet"  element={<MyWallet client={client}/>}/>
                 <Route path="/settings"  element={<Settings client={client}/>}/>
                 <Route path="/developer"  element={<Developer client={client}/>}/>
