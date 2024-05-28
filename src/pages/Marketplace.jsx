@@ -12,9 +12,12 @@ const Marketplace = ({ abt, market, client }) => {
     const numTokens = parseInt(tokens);
     if (numTokens > 0) {
       const ids = Array.from({ length: numTokens }, (_, index) => index + 1);
+      //call to backend for metadata
       const abtMetadata = await fetchABTs(ids); 
+      //call to smart contracts for listing info
       const abtListingInfo = await market.readListings(Addresses.AssetBoundToken, ids);
-      //below code is to combine both arrays for easier display. 
+      // console.log(abtListingInfo)
+      //below code is to combine both arrays for easier display into one single object for each abt isntead of two separate objects. 
       // console.log(abtListingInfo[0].seller)
       // console.log(abtListingInfo[0].usdPennyPrice)
       // console.log(abtListingInfo[0].rawValueGas)
