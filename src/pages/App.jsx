@@ -55,7 +55,7 @@ function App() {
         balanceInEther,
         nativeCurrency
       })
-      loadContracts(provider)
+      loadContracts(signer)
   };
 
   const loadContracts = async (signer) => {
@@ -99,7 +99,7 @@ function App() {
                 <Route path="/settings"  element={<Settings client={client}/>}/>
                 <Route path="/developer"  element={<Developer client={client}/>}/>
                 <Route path="/support"  element={<Support client={client}/>}/>
-                <Route path="/abt/:id"  element={<ABTDetails client={client}/>}/>
+                <Route path="/abt/:id"  element={<ABTDetails client={client} market={market} abt={abt} />}/>
                 <Route path="*" element={<Navigate replace to="/dashboard" />} />
               </Routes>
             </main>
