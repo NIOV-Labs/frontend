@@ -17,18 +17,17 @@ const Dashboard = ({ client, market, abt }) => {
 
   const loadDashboardItems = async () => {
     const proceeds = await market.checkProceeds(client.account);
+    const {rawValue, usdPennyValue} = proceeds
     setUserProceeds({
-      'rawValue': parseInt(proceeds.rawValue) / (10**18),
-      'usdPennyValue': (parseInt(proceeds.usdPennyValue.toString()) / 100).toFixed(2) 
+      'rawValue': parseInt(rawValue) / (10**18),
+      'usdPennyValue': (parseInt(usdPennyValue) / 100).toFixed(2) 
     });
 
   }
 
   const handleClaimingProceeds = async () => {
     try {
-      console.log(market)
       setLoadingProceeds(true)
-      console.log(client)
       const tx = await market.withdrawProceeds();
       await tx.wait(); 
       setLoadingProceeds(false)
