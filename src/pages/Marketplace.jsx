@@ -22,8 +22,8 @@ const Marketplace = ({ abt, market, client }) => {
       const combinedData = abtMetadata.map((metadata, index) => ({
         ...metadata,
         'seller': abtListingInfo[index].seller,
-        usdPennyPrice: parseInt(abtListingInfo[index].usdPennyPrice),
-        rawValueGas: parseInt(abtListingInfo[index].rawValueGas),
+        usdPennyPrice: parseInt(abtListingInfo[index].usdPennyPrice) / 100,
+        rawValueGas: parseInt(abtListingInfo[index].rawValueGas)  / (10**18),
         rawValueTkn: parseInt(abtListingInfo[index].rawValueTkn)
       }));
       setAbts(combinedData)

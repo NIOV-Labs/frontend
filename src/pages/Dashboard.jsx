@@ -1,25 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DropDownMenu from "../components/DropDownMenu"
 import PageHeader from "../components/PageHeader"
 import { FiChevronDown } from "react-icons/fi"
 import { MdArrowForwardIos, MdFilterList } from "react-icons/md"
 import { HiAdjustmentsHorizontal } from "react-icons/hi2"
+import { parseEther } from "ethers";
+import ProceedsModal from "../components/ProceedsModal";
 
 
-const Dashboard = () => {
+const Dashboard = ({ client, market, abt }) => {
   const [revenueTime, setRevenueTime] = useState('Yearly')
   const revenueTimeFrames = ['Yearly', 'Monthly', 'Weekly', 'Daily']
+  const [userProceeds, setUserProceeds] = useState({})
+  const [openProceeds, setOpenProceeds] = useState(false)
+  const [loadingProceeds, setLoadingProceeds] = useState(false)
+
+  const loadDashboardItems = async () => {
+    const proceeds = await market.checkProceeds(client.account);
+    setUserProceeds({
+      'rawValue': parseInt(proceeds.rawValue) / (10**18),
+      'usdPennyValue': (parseInt(proceeds.usdPennyValue.toString()) / 100).toFixed(2) 
+    });
+
+  }
+
+  const handleClaimingProceeds = async () => {
+    try {
+      console.log(market)
+      setLoadingProceeds(true)
+      console.log(client)
+      const tx = await market.withdrawProceeds();
+      await tx.wait(); 
+      setLoadingProceeds(false)
+      console.log('Proceeds withdrawn successfully');
+      loadDashboardItems();
+    } catch (error) {
+      console.error('Error withdrawing proceeds:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadDashboardItems();
+  }, []); 
 
   return (
     <>
       <PageHeader title={'Dashboard'} />
       <div className="w-full p-5 lg:p-10 grid grid-cols-1 min-[370px]:grid-cols-2 md:grid-cols-6 min-[1500px]:grid-cols-10 gap-4">
-        <ABTContainer title={'Total ABT created'} value={25} badgeValue={125} />
+        {/* <ABTContainer title={'Total ABT created'} value={25} badgeValue={125} /> */}
+        <ABTContainer title={'Unclaimed Proceeds'} value={`$${userProceeds.usdPennyValue}`} setOpenProceeds={setOpenProceeds} badgeValue={`${userProceeds.rawValue} Ξ`} />
         <ABTContainer title={'Total ABT sold'} value={14} badgeValue={43} />
         <ABTContainer title={'Gross Revenue'} value={'$12,230'} badgeValue={'+45%'} revenueTime={revenueTime} setRevenueTime={setRevenueTime} revenueTimeFrames={revenueTimeFrames} />
         <GraphContainer title={`Active Listing's`}/>
         <GraphContainer title={`Newly Created ABT's`}/>
         <GraphContainer title={`Pending Offers`}/>
+        {openProceeds && <ProceedsModal isOpen={openProceeds} setIsOpen={setOpenProceeds} handleFunds={handleClaimingProceeds} loading={loadingProceeds} />}
         <DesktopGraphContainer />
       </div>
     </>
@@ -28,21 +63,27 @@ const Dashboard = () => {
 
 export default Dashboard
 
-const ABTContainer = ({title, value, badgeValue, revenueTime, setRevenueTime, revenueTimeFrames}) => {
+const ABTContainer = ({title, value, badgeValue, revenueTime, setRevenueTime, revenueTimeFrames, setOpenProceeds}) => {
   const revenue = title === 'Gross Revenue';
+  const proceeds = title === 'Unclaimed Proceeds'
+  const handleClick = () => {
+    if (proceeds) {
+      setOpenProceeds(true);
+    }
+  };
   return (
-    <div className={`w-full p-3 bg-[#F9FAFF] border-2 border-slate-300 flex flex-col justify-between items-start md:col-span-2 min-[1500px]:col-span-2 ${revenue ? 'col-span-1 min-[370px]:col-span-2' : 'col-span-1'}`}>
+    <div onClick={handleClick}  className={` ${proceeds ? 'cursor-pointer' : ''} w-full p-3 bg-[#F9FAFF] border-2 border-slate-300 flex flex-col justify-between items-start md:col-span-2 min-[1500px]:col-span-2 ${revenue ? 'col-span-1 min-[370px]:col-span-2' : 'col-span-1'}`}>
       <div className="flex justify-between items-center relative w-full">
         <p className="text-sm lg:text-base">{title}</p>
         {revenue && <DropDownMenu Icon={FiChevronDown} flexDirection={''} title={revenueTime} options={revenueTimeFrames} setOptionState={setRevenueTime} />}
       </div>
       <h1 className="text-3xl lg:text-4xl my-4 font-semibold">{value}</h1>
-      <div className="flex justify-start items-center gap-2">
-        <p className="text-sm lg:text-base">{revenue ? '24h Inflow' : 'Layers'}</p>
-        <div className={`text-xs lg:text-sm ${revenue ? 'bg-green-400 text-black' : 'bg-slate-800 text-white'} px-2 py-[2px] rounded-full`}>
+      <div className={`flex justify-start items-center ${proceeds ? 'gap-0' : 'gap-2'}`}>
+        <p className="text-sm lg:text-base">{revenue ? '24h Inflow' : proceeds ? '' : 'Layers'}</p>
+        <div className={`${proceeds ? 'text-md lg:text-md' : 'text-xs lg:text-sm'}  ${revenue ? 'bg-green-400 text-black' :  proceeds ? 'px-0 font-bold' :  'bg-slate-800 text-white'} px-2 py-[2px] rounded-full`}>
           {badgeValue}
         </div>
-      </div>
+        </div>
     </div>
   )
 }
