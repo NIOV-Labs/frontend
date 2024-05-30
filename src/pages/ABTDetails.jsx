@@ -33,7 +33,7 @@ const ABTDetails = ({ client, market, abt }) => {
 
         //read abt listing info
         const listing = await market.readListing(abt.target, id)
-        const isSeller = listing.seller === client.signer.address
+        const signerIsSeller = listing.seller === client.signer.address
         const price = (parseInt(listing[1]) / 100).toFixed(2)
 
         const {name, document1, document2, externalURL, description} = response
@@ -49,7 +49,7 @@ const ABTDetails = ({ client, market, abt }) => {
             isOwner: owner.toLowerCase() === client.account.toLowerCase(),
             owner,
             isApproved,
-            isSeller,
+            signerIsSeller,
             price
         }
         setAbtInfo(data)
@@ -87,29 +87,24 @@ const ABTDetails = ({ client, market, abt }) => {
     const pennyAmount = parseInt(parseFloat(price) * 100)
     try {
         setLoadingFunction(true)
-        // const holder = await abt.ownerOf(id)
-        // console.log('isNftOwner', holder === client.signer.address)
-        // let listing = await market.readListing(abt.target, id)
-        // console.log('before:', listing)
-        // const approvedAddress = await abt.getApproved(id)
-        // console.log('nftIsApprovedForMarket', approvedAddress === market.target)
-        await market.createListing(abt.target, id, pennyAmount)
-        const response = await market.readListing(abt.target, id)
+        await market.createListing(abt.target, id, pennyAmount);
+        const response = await market.readListing(abt.target, id);
+        const {seller, usdPennyPrice, rawValueGas} = response;
         if (response) {
             setAbtInfo((prevAbtInfo) => ({
                 ...prevAbtInfo,
-                isSeller: response.seller === client.signer.address,
-                price: (parseInt(response[1]) / 100).toFixed(2),
+                signerIsSeller: seller === client.signer.address,
+                priceUsd: (parseInt(usdPennyPrice) / 100).toFixed(2),
+                priceGas: (parseInt(rawValueGas) / 10 ** 18).toFixed(18),
             }));
         }
-        // listing = await market.readListing(abt.target, id)
-        // console.log(listing)
-    } catch(err) {
+    } catch (err) {
         console.error('Error putting for sale:', err);
     } finally {
-        setLoadingFunction(false)
+        setLoadingFunction(false);
     }
-  }
+};
+
 
   const handlePriceInput = (e) => {
     const value = e.target.value;
@@ -141,7 +136,7 @@ const ABTDetails = ({ client, market, abt }) => {
             <div>
                 <Accordian owner={abtInfo.owner.slice(0, 5) + '...' + abtInfo.owner.slice(38, 42)} description={abtInfo.description} details={abtInfo.details} link={abtInfo.document1Link} />
                 {abtInfo.isOwner ? (
-                    abtInfo.isSeller ? (
+                    abtInfo.signerIsSeller ? (
                         <div className="w-full bg-white flex justify-end items-center">
                             <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
                             <p className='text-gray-700 text-md lg:text-lg font-bold'>$ {abtInfo.price}</p>
@@ -185,10 +180,10 @@ const ABTDetails = ({ client, market, abt }) => {
                         </div>
                     )
                     )
-                ) : abtInfo.price > 0 ? (
+                ) : abtInfo.price >= 0 ? (
                     <div className="w-full bg-white flex justify-between items-center gap-3">
                         <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
-                            <p className='text-gray-700 text-md lg:text-lg font-bold'>$ {abtInfo.price}</p>
+                            <p className='text-gray-700 text-md lg:text-lg font-bold'>$ {abtInfo.priceUsd}</p>
                             <p className='text-gray-700 text-sm xl:text-md font-medium leading-3'>Price</p>
                         </div>
                         <button
@@ -212,6 +207,8 @@ const ABTDetails = ({ client, market, abt }) => {
 export default ABTDetails;
 
 
+ // listing = await market.readListing(abt.target, id)
+        // console.log(listing)
     // const approved = await abt.getApproved(id)
     // console.log(approved === market.target)
     // const holder = await abt.ownerOf(id)
