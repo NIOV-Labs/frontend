@@ -2,7 +2,7 @@ import { useState } from "react"
 import { MdKeyboardArrowDown } from "react-icons/md";
 
 const Accordian = ({ owner, description, link}) => {
-  const [openDescription, setOpenDescription] = useState(false);
+  const [openDescription, setOpenDescription] = useState(true);
   const [openDocumentation, setOpenDoicumentation] = useState(false);
 
   return (
@@ -21,7 +21,7 @@ const Accordian = ({ owner, description, link}) => {
             {
                 openDescription && 
                     <div className="mt-3">
-                        <p className="text-sm xl:text-base">{description}</p>
+                        <p className="text-sm xl:text-base font-medium">{description}</p>
                     </div>
 
             }
