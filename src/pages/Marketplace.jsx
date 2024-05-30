@@ -3,6 +3,7 @@ import PageHeader from "../components/PageHeader";
 import { fetchABTs } from "../utilities/Contract";
 import Addresses from '../../utils/deploymentMap/31337.json'
 import Loader from "../components/Loader";
+import PageLoader from "./PageLoader"
 
 const Marketplace = ({ abt, market, client }) => {
   const [abts, setAbts] = useState([]);
@@ -79,9 +80,7 @@ const Marketplace = ({ abt, market, client }) => {
 
   if (loading) {
     return (
-      <div className="w-full grid place-content-center center-screen">
-        <Loader />
-      </div>
+      <PageLoader />
     )
   }
 
