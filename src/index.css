@@ -38,3 +38,8 @@ code {
   color: #6338F1;
   border: none;
 }
+
+/* styles.css */
+.center-screen {
+  height: calc(100vh - 5rem);
+}
