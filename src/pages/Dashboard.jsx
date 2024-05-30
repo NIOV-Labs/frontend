@@ -4,9 +4,8 @@ import PageHeader from "../components/PageHeader";
 import { FiChevronDown } from "react-icons/fi";
 import { MdArrowForwardIos, MdFilterList } from "react-icons/md";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import { parseEther } from "ethers";
-import ProceedsModal from "../components/ProceedsModal";
 import { getSoldABTs, getGrossRevenue, exportMarketplaceData } from "../utilities/Contract";
+import Loader from "../components/Loader";
 
 const Dashboard = ({ client, market, abt }) => {
   const [revenueTime, setRevenueTime] = useState('Yearly');
@@ -14,13 +13,13 @@ const Dashboard = ({ client, market, abt }) => {
   const [userProceeds, setUserProceeds] = useState({});
   const [soldABTs, setSoldABTs] = useState(0);
   const [grossRevenue, setGrossRevenue] = useState(0);
-  const [openProceeds, setOpenProceeds] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [loadingProceeds, setLoadingProceeds] = useState(false);
 
   const loadDashboardItems = async () => {
     try {
+      setLoading(true)
       const proceeds = await market.checkProceeds(client.account);
-      console.log('Proceeds:', proceeds);
       setUserProceeds({
         rawValue: parseInt(proceeds.rawValue) / (10 ** 18),
         usdPennyValue: (parseInt(proceeds.usdPennyValue.toString()) / 100).toFixed(2)
@@ -33,6 +32,8 @@ const Dashboard = ({ client, market, abt }) => {
       setGrossRevenue(revenueResponse.grossRevenue / 100); // Assuming the revenue is in pennies
     } catch (error) {
       console.error('Error loading dashboard items:', error);
+    } finally {
+      setLoading(false)
     }
   };
   
