@@ -5,8 +5,6 @@ import EmptyContainer from "./EmptyContainer";
 
 const PdfCarousel = ({ documents }) => {
  const [imgIndex, setImgIndex] = useState(0);
- console.log('img', imgIndex)
- console.log('length', documents.length)
 
  useEffect(() => {
     if (documents.length === 0) {
