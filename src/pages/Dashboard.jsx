@@ -1,40 +1,50 @@
 import { useEffect, useState } from "react";
-import DropDownMenu from "../components/DropDownMenu"
-import PageHeader from "../components/PageHeader"
-import { FiChevronDown } from "react-icons/fi"
-import { MdArrowForwardIos, MdFilterList } from "react-icons/md"
-import { HiAdjustmentsHorizontal } from "react-icons/hi2"
-import Loader from "../components/Loader";
-
+import DropDownMenu from "../components/DropDownMenu";
+import PageHeader from "../components/PageHeader";
+import { FiChevronDown } from "react-icons/fi";
+import { MdArrowForwardIos, MdFilterList } from "react-icons/md";
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
+import { parseEther } from "ethers";
+import ProceedsModal from "../components/ProceedsModal";
+import { getSoldABTs, getGrossRevenue, exportMarketplaceData } from "../utilities/Contract";
 
 const Dashboard = ({ client, market, abt }) => {
-  const [revenueTime, setRevenueTime] = useState('Yearly')
-  const revenueTimeFrames = ['Yearly', 'Monthly', 'Weekly', 'Daily']
-  const [userProceeds, setUserProceeds] = useState({})
-  const [loading, setLoading] = useState(false)
-  const [loadingProceeds, setLoadingProceeds] = useState(false)
+  const [revenueTime, setRevenueTime] = useState('Yearly');
+  const revenueTimeFrames = ['Yearly', 'Monthly', 'Weekly', 'Daily'];
+  const [userProceeds, setUserProceeds] = useState({});
+  const [soldABTs, setSoldABTs] = useState(0);
+  const [grossRevenue, setGrossRevenue] = useState(0);
+  const [openProceeds, setOpenProceeds] = useState(false);
+  const [loadingProceeds, setLoadingProceeds] = useState(false);
 
   const loadDashboardItems = async () => {
-    setLoading(true);
     try {
       const proceeds = await market.checkProceeds(client.account);
-      const { rawValue, usdPennyValue } = proceeds;
+      console.log('Proceeds:', proceeds);
       setUserProceeds({
-        rawValue: parseInt(rawValue) / 10 ** 18,
-        usdPennyValue: (parseInt(usdPennyValue) / 100).toFixed(2),
+        rawValue: parseInt(proceeds.rawValue) / (10 ** 18),
+        usdPennyValue: (parseInt(proceeds.usdPennyValue.toString()) / 100).toFixed(2)
       });
+  
+      const soldResponse = await getSoldABTs(client.account);
+      setSoldABTs(soldResponse.soldABTs);
+  
+      const revenueResponse = await getGrossRevenue(client.account);
+      setGrossRevenue(revenueResponse.grossRevenue / 100); // Assuming the revenue is in pennies
     } catch (error) {
       console.error('Error loading dashboard items:', error);
-    } finally {
-      setLoading(false);
     }
-  }
+  };
+  
 
   const handleClaimingProceeds = async () => {
     try {
-      setLoadingProceeds(true)
+      console.log(market);
+      setLoadingProceeds(true);
+      console.log(client);
       const tx = await market.withdrawProceeds();
-      await tx.wait(); 
+      await tx.wait();
+      setLoadingProceeds(false);
       console.log('Proceeds withdrawn successfully');
       loadDashboardItems();
     } catch (error) {
@@ -44,9 +54,18 @@ const Dashboard = ({ client, market, abt }) => {
     }
   };
 
+  const handleExportData = async () => {
+    try {
+      await exportMarketplaceData(client.account);
+      console.log('Marketplace data exported successfully');
+    } catch (error) {
+      console.error('Error exporting marketplace data:', error);
+    }
+  };
+
   useEffect(() => {
     loadDashboardItems();
-  }, []); 
+  }, []);
 
   return (
     <>
@@ -61,10 +80,10 @@ const Dashboard = ({ client, market, abt }) => {
         <DesktopGraphContainer />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
 
 const ABTContainer = ({title, value, badgeValue, revenueTime, setRevenueTime, revenueTimeFrames, funds, loading, loadingProceeds, handleClaim }) => {
   const revenue = title === 'Gross Revenue';
@@ -104,53 +123,52 @@ const ABTContainer = ({title, value, badgeValue, revenueTime, setRevenueTime, re
         </>
         
       )}
-
-
     </div>
-  )
-}
+  );
+};
 
-const GraphContainer = ({title}) => {
-  const [isOpen, setIsOpen] = useState(false)
+
+
+const GraphContainer = ({ title }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const activeListing = title === `Active Listing's`;
   const pending = title === `Pending Offers`;
   return (
     <div className={`w-full col-span-1 min-[370px]:col-span-2 ${activeListing ? 'md:col-span-6' : 'md:col-span-3 min-[1500px]:col-span-4'} ${!activeListing && 'min-[1500px]:hidden'}`}>
       <div className={`${isOpen ? '' : 'border-b-2 border-slate-300'} min-[1500px]:border-0  w-full flex justify-between items-center pb-4 min-[1500px]:pb-2`}>
-        <div onClick={() =>setIsOpen(!isOpen)} className="flex justify-start items-center gap-2">
+        <div onClick={() => setIsOpen(!isOpen)} className="flex justify-start items-center gap-2">
           <p className="text-xl lg:text-2xl">{title}</p>
           <div className='text-xs lg:text-sm min-[1500px]:hidden'>
-              <MdArrowForwardIos />
+            <MdArrowForwardIos />
           </div>
         </div>
-          {
-            activeListing && 
-              <div className="flex gap-2 md:gap-6 justify-end items-center">
-                <DropDownMenu Icon={MdFilterList} flexDirection={'flex-row-reverse'} title={'Filter'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
-                <DropDownMenu Icon={HiAdjustmentsHorizontal} flexDirection={'flex-row-reverse'} title={'Sort'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
-              </div>
-          }
-          {
-            pending &&
-              <DropDownMenu Icon={MdFilterList} flexDirection={'flex-row-reverse'} title={'Filter'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
-          }
+        {
+          activeListing &&
+          <div className="flex gap-2 md:gap-6 justify-end items-center">
+            <DropDownMenu Icon={MdFilterList} flexDirection={'flex-row-reverse'} title={'Filter'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
+            <DropDownMenu Icon={HiAdjustmentsHorizontal} flexDirection={'flex-row-reverse'} title={'Sort'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
+          </div>
+        }
+        {
+          pending &&
+          <DropDownMenu Icon={MdFilterList} flexDirection={'flex-row-reverse'} title={'Filter'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
+        }
       </div>
     </div>
-  )
-}
-
+  );
+};
 
 const DesktopGraphContainer = () => {
   return (
     <div className="w-full hidden min-[1500px]:flex flex-col col-span-4 row-start-1 row-span-2 col-start-7 justify-between items-start ">
       <div className="w-full flex flex-col jusitfy-start items-start">
-        <div  className={`w-full flex justify-between items-center pb-2 border-b-2 border-slate-300 min-[1500px]:border-0`}>
+        <div className={`w-full flex justify-between items-center pb-2 border-b-2 border-slate-300 min-[1500px]:border-0`}>
           <p className="text-xl lg:text-2xl">Newly Created ABT&apos;s</p>
         </div>
         {/* Graph content will go here */}
       </div>
       <div className="w-full flex flex-col jusitfy-start items-start">
-        <div  className={`w-full flex justify-between items-center pb-2 border-b-2 border-slate-300 min-[1500px]:border-0`}>
+        <div className={`w-full flex justify-between items-center pb-2 border-b-2 border-slate-300 min-[1500px]:border-0`}>
           <p className="text-xl lg:text-2xl">Pending Offers</p>
           <div className="flex gap-6 justify-end items-center">
             <DropDownMenu Icon={MdFilterList} flexDirection={'flex-row-reverse'} title={'Filter'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
@@ -160,5 +178,5 @@ const DesktopGraphContainer = () => {
         {/* Graph content will go here */}
       </div>
     </div>
-  )
-}
+  );
+};
