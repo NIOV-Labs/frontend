@@ -89,3 +89,72 @@ export async function fetchABTs(ids) {
     throw error;
   }
 }
+
+export async function getSoldABTs(wallet) {
+  try {
+    const response = await fetch(`${BASE_URL}/soldABTs?wallet=${wallet}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error getting sold ABTs:', error);
+    throw error;
+  }
+}
+
+export async function getGrossRevenue(wallet) {
+  try {
+    const response = await fetch(`${BASE_URL}/grossRevenue?wallet=${wallet}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error getting gross revenue:', error);
+    throw error;
+  }
+}
+
+export async function exportMarketplaceData(wallet) {
+  try {
+    const response = await fetch(`${BASE_URL}/exportMarketplaceData?wallet=${wallet}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `marketplace_data_${Date.now()}_${wallet}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+  } catch (error) {
+    console.error('Error exporting marketplace data:', error);
+    throw error;
+  }
+}

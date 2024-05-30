@@ -92,7 +92,7 @@ function App() {
             <UserNavBar client={client} />
             <main className='mt-[4.5rem] lg:mt-[5rem] xl:ml-72 2xl:ml-80 relative w-full'>
               <Routes>
-                <Route path="/dashboard"  element={<Dashboard client={client}/>}/>
+                <Route path="/dashboard"  element={<Dashboard client={client} market={market} />}/>
                 <Route path="/abts"  element={<ABTsProject client={client}/>}/>
                 <Route path="/marketplace"  element={<Marketplace client={client} market={market} abt={abt} />}/>
                 <Route path="/myWallet"  element={<MyWallet client={client}/>}/>
