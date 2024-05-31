@@ -36,11 +36,11 @@ const Images = ({ imgs, imgIndex}) => {
         <>
             {imgs.map((img, idx) => {
                 return (
-                    <div key={idx} href={document.file} target="_blank" rel="noopener noreferrer" className={`${imgIndex !== idx && 'hidden'}  w-80 md:w-[30rem] h-full`}
+                    <div key={idx} href={document.file} target="_blank" rel="noopener noreferrer" className={`${imgIndex !== idx && 'hidden'}  w-80 md:w-[26rem] h-full`}
                     >
                         <motion.img
                             src={img}
-                            className='object-center border-slate-400 border-[1px] w-full h-full rounded'
+                            className='object-contain border-slate-400 border-[1px] w-full h-full rounded'
                             // style={{ maxWidth: '100%', maxHeight: '100%' }}
                         />
                     </div>
