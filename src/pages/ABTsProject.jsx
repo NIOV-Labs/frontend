@@ -102,7 +102,7 @@ const ABTsProject = ({client, market, abt, reader}) => {
 
   return (
     <>
-      <PageHeader title={'ABTs Projects'} />
+      <PageHeader title={'My ABTs'} />
       <div className="w-full p-5 lg:px-10 lg:py-10 flex flex-col justify-center items-center gap-3 lg:gap-4">
         {
           myABTs.length > 0 ? (
