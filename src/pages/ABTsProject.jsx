@@ -72,22 +72,6 @@ const ABTsProject = ({client, market, abt, reader}) => {
     <>
       <PageHeader title={'ABTs Projects'} />
       <div className="w-full p-5 lg:px-10 lg:py-7 flex-col justify-center items-center">
-        {/* <div className="flex justify-center sm:justify-between items-center w-full mb-4">
-          {
-            myABTs.length > 0 &&
-              <>
-                <button onClick={() => setOpenMint(true)} className={`w-full sm:w-max sm:px-5 py-2 gap-3 rounded=sm flex justify-center items-center bg-[#7B61FF] text-white`}>
-                  <div className='text-md lg:text-sm '>
-                      <FaPen />
-                  </div>
-                  Create ABT
-                </button>
-                <div className="hidden sm:flex">
-                  <DropDownMenu Icon={MdFilterList} flexDirection={'flex-row-reverse'} title={'Filter'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} setOptionState={setAbtFilter} />  
-                </div>
-              </>
-          }
-        </div> */}
         {
           myABTs.length > 0 ? (
             <div className={`border-b-2 border-slate-300 min-[1500px]:border-0  w-full flex justify-between items-center ${myABTs.length > 0 ? 'pb-4' : 'pb-8'} min-[1500px]:pb-2 sm:hidden`}>
