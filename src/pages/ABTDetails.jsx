@@ -42,7 +42,7 @@ const ABTDetails = ({ client, market, abt }) => {
         // console.log(listing)
         const signerIsSeller = listing.seller === client.signer.address
         const priceUsd = (parseInt(listing[1]) / 100).toFixed(2)
-        const priceGas = (parseInt(listing[2]) / 10 ** 18).toFixed(18)
+        const priceGas = (parseInt(listing[2]) / 10 ** 18).toFixed(5)
 
         const {name, document1, document2, externalURL, description} = response
         const data = {
@@ -105,7 +105,7 @@ const ABTDetails = ({ client, market, abt }) => {
                 ...prevAbtInfo,
                 signerIsSeller: seller === client.signer.address,
                 priceUsd: (parseInt(usdPennyPrice) / 100).toFixed(2),
-                priceGas: (parseInt(rawValueGas) / 10 ** 18).toFixed(18),
+                priceGas: (parseInt(rawValueGas) / 10 ** 18).toFixed(5),
             }));
         }
     } catch (err) {
@@ -194,7 +194,7 @@ const ABTDetails = ({ client, market, abt }) => {
                         </div>
                     )
                     )
-                ) : abtInfo.priceUsd >= 0 ? (
+                ) : abtInfo.priceUsd > 0 ? (
                     <div className="w-full bg-white flex flex-col justify-between items-center gap-3">
                         <div className='w-full flex flex-col justify-center items-center gap-2 sm:flex-row sm:gap-4'>
                             <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
