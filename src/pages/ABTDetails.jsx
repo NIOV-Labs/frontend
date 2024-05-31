@@ -6,12 +6,15 @@ import { fetchABT } from '../utilities/Contract';
 import Loader from '../components/Loader';
 import ImageCarousel from '../components/ImageCarousel';
 import LoaderTwo from '../components/LoaderTwo';
+import { ethers } from 'ethers';
 
 const dataURL = 'http://localhost:3000/uploads/'
 
 const ABTDetails = ({ client, market, abt }) => {
   const { id } = useParams();
-  const [abtInfo, setAbtInfo] = useState({});
+  const [abtInfo, setAbtInfo] = useState({
+    owner: ethers.ZeroAddress
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [loadingFunction, setLoadingFunction] = useState(false)
   const [price, setPrice] = useState('0.00');
@@ -19,22 +22,27 @@ const ABTDetails = ({ client, market, abt }) => {
   const fetchABTDetails = async () => {
     try {
         const response = await fetchABT(id);
+        // console.log(response)
 
         //handling images
         const document1image = `${dataURL}${response.document1.replace('.pdf', '.jpg')}`
         const document1Link = `${dataURL}${response.document1}`
         const images = response.images.map((image) => `${dataURL}${image}`);
-
+        // console.log(abt)
         // //checking to see owner of abt 
         const owner = await abt.ownerOf(id);  
+        // console.log(owner)
         // //checking to see if abt is market approved
         const approvedAddress = await abt.getApproved(id) 
+        // console.log(approvedAddress)
         const isApproved = approvedAddress === market.target
 
         //read abt listing info
         const listing = await market.readListing(abt.target, id)
+        // console.log(listing)
         const signerIsSeller = listing.seller === client.signer.address
-        const price = (parseInt(listing[1]) / 100).toFixed(2)
+        const priceUsd = (parseInt(listing[1]) / 100).toFixed(2)
+        const priceGas = (parseInt(listing[2]) / 10 ** 18).toFixed(18)
 
         const {name, document1, document2, externalURL, description} = response
         const data = {
@@ -50,18 +58,21 @@ const ABTDetails = ({ client, market, abt }) => {
             owner,
             isApproved,
             signerIsSeller,
-            price
+            priceUsd, 
+            priceGas
         }
+        console.log(data)
         setAbtInfo(data)
+        setIsLoading(false)
     } catch(err) {
         console.error('Error fetching abt details:', err);
-    } finally {
-        setIsLoading(false)
-    }
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await fetchABTDetails()
+    } 
   }
   useEffect(() => {
     fetchABTDetails();
-  }, [id]);
+  }, []);
   
   const handleApproval = async () => {
     try {
@@ -75,11 +86,10 @@ const ABTDetails = ({ client, market, abt }) => {
         ...prevAbtInfo,
         isApproved: true,
         }));
+        setLoadingFunction(false)
     } catch(err) {
         console.error('Error approving:', err);
-    } finally {
-        setLoadingFunction(false)
-    }
+    } 
   }
 
   const handleSale = async (e) => {
@@ -137,10 +147,14 @@ const ABTDetails = ({ client, market, abt }) => {
                 <Accordian owner={abtInfo.owner.slice(0, 5) + '...' + abtInfo.owner.slice(38, 42)} description={abtInfo.description} details={abtInfo.details} link={abtInfo.document1Link} />
                 {abtInfo.isOwner ? (
                     abtInfo.signerIsSeller ? (
-                        <div className="w-full bg-white flex justify-end items-center">
+                        <div className='w-full flex flex-col justify-center items-center gap-2 sm:flex-row sm:gap-4'>
                             <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
-                            <p className='text-gray-700 text-md lg:text-lg font-bold'>$ {abtInfo.price}</p>
-                            <p className='text-gray-700 text-sm xl:text-md font-medium leading-3'>Price</p>
+                                <p className='text-gray-700 text-md lg:text-lg font-bold'>{abtInfo.priceGas}</p>
+                                <p className='text-gray-700 text-sm xl:text-md font-medium leading-3'>Gas</p>
+                            </div>
+                            <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
+                                <p className='text-gray-700 text-md lg:text-lg font-bold'>$ {abtInfo.priceUsd}</p>
+                                <p className='text-gray-700 text-sm xl:text-md font-medium leading-3'>Price</p>
                             </div>
                         </div>
                     ) : (
@@ -180,20 +194,26 @@ const ABTDetails = ({ client, market, abt }) => {
                         </div>
                     )
                     )
-                ) : abtInfo.price >= 0 ? (
-                    <div className="w-full bg-white flex justify-between items-center gap-3">
-                        <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
-                            <p className='text-gray-700 text-md lg:text-lg font-bold'>$ {abtInfo.priceUsd}</p>
-                            <p className='text-gray-700 text-sm xl:text-md font-medium leading-3'>Price</p>
+                ) : abtInfo.priceUsd >= 0 ? (
+                    <div className="w-full bg-white flex flex-col justify-between items-center gap-3">
+                        <div className='w-full flex flex-col justify-center items-center gap-2 sm:flex-row sm:gap-4'>
+                            <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
+                                <p className='text-gray-700 text-md lg:text-lg font-bold'>{abtInfo.priceGas}</p>
+                                <p className='text-gray-700 text-sm xl:text-md font-medium leading-3'>Gas</p>
+                            </div>
+                            <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
+                                <p className='text-gray-700 text-md lg:text-lg font-bold'>$ {abtInfo.priceUsd}</p>
+                                <p className='text-gray-700 text-sm xl:text-md font-medium leading-3'>Price</p>
+                            </div>
                         </div>
                         <button
-                            className="flex-1 bg-accent3 text-white font-semibold py-3 px-4 rounded transition duration-300 ease-in-out"
+                            className="flex-1 w-full sm:max-w-96 lg:max-w-full bg-accent3 text-white font-semibold py-3 px-4 rounded transition duration-300 ease-in-out"
                         >
                             Make Offer
                         </button>
                     </div>
                 ) : (
-                    <div className='w-full text-white font-semibold bg-accent1 border-slate-400 border-[1px] p-3 lg:p-4 rounded grid place-content-center'>
+                    <div className='w-full sm:max-w-96 lg:max-w-full text-white font-semibold bg-accent3  p-3 lg:p-4 rounded grid place-content-center'>
                         Not Currently Listed
                     </div>
                 )}
