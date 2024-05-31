@@ -15,6 +15,7 @@ import chainConfig from '../../utils/ChainConfig.json'
 import Addresses from '../../utils/deploymentMap/31337.json'
 import ABTAbi from '../../utils/interfaces/AssetBoundToken.json'
 import MarketAbi from '../../utils/interfaces/NiovMarket.json'
+import MarketReaderAbi from '../../utils/interfaces/MarketReader.json'
 import { formatUnits } from 'ethers';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
   const [hasWeb3, setHasWeb3] = useState(false);
   const [abt, setAbt] = useState({})
   const [market, setMarket] = useState([])
+  const [reader, setReader] = useState({})
 
   const web3Handler = async () => {
       var account; var chainId;
@@ -61,6 +63,8 @@ function App() {
   const loadContracts = async (signer) => {
     const abtContract = new ethers.Contract(Addresses.AssetBoundToken, ABTAbi.abi, signer);
     const marketContract = new ethers.Contract(Addresses.NiovMarket, MarketAbi.abi, signer);
+    const readerContract = new ethers.Contract(Addresses.MarketReader, MarketReaderAbi.abi, signer)
+    setReader(readerContract)
     setAbt(abtContract)
     setMarket(marketContract)
   }
@@ -92,14 +96,14 @@ function App() {
             <UserNavBar client={client} />
             <main className='mt-[4.5rem] lg:mt-[5rem] xl:ml-72 2xl:ml-80 relative w-full'>
               <Routes>
-                <Route path="/dashboard"  element={<Dashboard client={client} market={market} abt={abt}/>}/>
-                <Route path="/abts"  element={<ABTsProject client={client}/>}/>
-                <Route path="/marketplace"  element={<Marketplace client={client} market={market} abt={abt} />}/>
+                <Route path="/dashboard"  element={<Dashboard client={client} market={market} abt={abt} reader={reader}/>}/>
+                <Route path="/abts"  element={<ABTsProject client={client} market={market} abt={abt} reader={reader}/>}/>
+                <Route path="/marketplace"  element={<Marketplace client={client} market={market} abt={abt} reader={reader} />}/>
                 <Route path="/myWallet"  element={<MyWallet client={client}/>}/>
                 <Route path="/settings"  element={<Settings client={client}/>}/>
                 <Route path="/developer"  element={<Developer client={client}/>}/>
                 <Route path="/support"  element={<Support client={client}/>}/>
-                <Route path="/abt/:id"  element={<ABTDetails client={client} market={market} abt={abt} />}/>
+                <Route path="/abt/:id"  element={<ABTDetails client={client} market={market} abt={abt} reader={reader} />}/>
                 <Route path="*" element={<Navigate replace to="/dashboard" />} />
               </Routes>
             </main>
