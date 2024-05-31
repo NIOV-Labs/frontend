@@ -6,7 +6,6 @@ import { MdOutlineKeyboardArrowDown, MdFilterList } from "react-icons/md";
 import MintABT from "./Minting/MintABT";
 import { fetchABTs } from "../utilities/Contract";
 import ActiveSection from "../components/ActiveSection";
-import Table from "../components/Table";
 import MarketCard from "../components/MarketCard";
 import PageLoader from "./PageLoader";
 

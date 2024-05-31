@@ -14,7 +14,7 @@ const PdfContainer = ({ imageSrc, pdfLink }) => {
       <motion.img
         src={imageSrc}
         alt="pdf image"
-        className='object-center border-slate-400 border-[1px]'
+        className='object-contain border-slate-400 border-[1px]'
         style={{ maxWidth: '100%', maxHeight: '100%' }}
         whileHover={{
           filter: 'blur(2px) brightness(0.8)',
