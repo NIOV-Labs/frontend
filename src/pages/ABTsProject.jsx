@@ -1,15 +1,66 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DropDownMenu from "../components/DropDownMenu";
 import PageHeader from "../components/PageHeader"
 import { FaPen } from "react-icons/fa";
 import { MdOutlineKeyboardArrowDown, MdFilterList } from "react-icons/md";
 import MintABT from "./Minting/MintABT";
 
-const ABTsProject = ({client}) => {
+const ABTsProject = ({client, market, abt, reader}) => {
   const [myABTs, setMyABTs] = useState([])
-  const [abtFilter, setAbtFilter] = useState('Yearly')
+  const [displayedAbts, setDisplayedAbts] = useState([])
+  const [abtFilter, setAbtFilter] = useState(0)
   const [openMint, setOpenMint] = useState(false)
   const [pdfFile, setPdfFile] = useState({});
+  const [loading, setLoading] = useState(true)
+
+  const loadMyAbts = async () => {
+    try { 
+      const results = await reader.abtListingsOf(abt.target, client.signer.address)
+      const tokenIds = results.tokenIds
+      const tokenArray = Object.values(tokenIds).map(value => parseInt(value));
+      const listingData = results.listingData 
+      const combinedData = listingData.map((listing, index) => ({
+        tokenId: tokenArray[index],
+        seller: listing.seller,
+        priceUsd: parseInt(listing.usdPennyPrice) / 100,
+      }));
+      // console.log(combinedData);
+
+      // Filter ABTs with priceUsd greater than zero
+      const filteredAbts = combinedData.filter(abt => abt.priceUsd > 0);
+
+      // console.log(filteredAbts)
+      // Update the states
+      setMyABTs(combinedData);
+      setDisplayedAbts(filteredAbts);
+      setLoading(false)
+    } catch (error) {
+      console.error('Error loading my items:', error);
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+      // await loadMyAbts()
+    }
+  }
+
+  const updateFilter = () => {
+    if (abtFilter === 1) {
+      // Show ABTs with priceUsd equal to zero meaning not active
+      setDisplayedAbts(myABTs.filter(abt => abt.priceUsd === 0));
+    } else if (abtFilter === 2) {
+      // Show all ABTs
+      setDisplayedAbts(myABTs);
+    } else {
+      // Default behavior: Show all ABTs
+      setDisplayedAbts(myABTs.filter(abt => abt.priceUsd > 0));
+    }
+  };
+
+  useEffect(() => {
+    updateFilter();
+  }, [abtFilter]);
+
+  useEffect(() => {
+    loadMyAbts();
+  }, []); 
 
   if (openMint) {
     return (
@@ -17,12 +68,11 @@ const ABTsProject = ({client}) => {
     )
   }
 
-
   return (
     <>
       <PageHeader title={'ABTs Projects'} />
       <div className="w-full p-5 lg:px-10 lg:py-7 flex-col justify-center items-center">
-        <div className="flex justify-center sm:justify-between items-center w-full mb-4">
+        {/* <div className="flex justify-center sm:justify-between items-center w-full mb-4">
           {
             myABTs.length > 0 &&
               <>
@@ -37,7 +87,7 @@ const ABTsProject = ({client}) => {
                 </div>
               </>
           }
-        </div>
+        </div> */}
         {
           myABTs.length > 0 ? (
             <div className={`border-b-2 border-slate-300 min-[1500px]:border-0  w-full flex justify-between items-center ${myABTs.length > 0 ? 'pb-4' : 'pb-8'} min-[1500px]:pb-2 sm:hidden`}>
