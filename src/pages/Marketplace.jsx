@@ -5,7 +5,7 @@ import Addresses from '../../utils/deploymentMap/31337.json'
 import Loader from "../components/Loader";
 import PageLoader from "./PageLoader"
 
-const Marketplace = ({ abt, market, client }) => {
+const Marketplace = ({ abt, market, client, reader }) => {
   const [abts, setAbts] = useState([]);
   const [displayedAbts, setDisplayedAbts] = useState([])
   const [priceFilter, setPriceFilter] = useState(0)
@@ -18,10 +18,12 @@ const Marketplace = ({ abt, market, client }) => {
       const numTokens = parseInt(tokens);
       if (numTokens > 0) {
         const ids = Array.from({ length: numTokens }, (_, index) => index + 1);
-        //call to backend for metadata
+        //call to backend for metadata`
         const abtMetadata = await fetchABTs(ids); 
+        // console.log({abtMetadata})
         //call to smart contracts for listing info
-        const abtListingInfo = await market.readListings(Addresses.AssetBoundToken, ids);
+        const abtListingInfo = await reader.readListings(Addresses.AssetBoundToken, ids);
+        // console.log({abtListingInfo})
         //below code is to combine both arrays for easier display into one single object for each abt instead of two separate objects. 
         const combinedData = abtMetadata.map((metadata, index) => ({
           ...metadata,
@@ -32,13 +34,14 @@ const Marketplace = ({ abt, market, client }) => {
         }));
         // Sort combinedData by priceUsd from highest to lowest to begin with
         combinedData.sort((a, b) => b.priceUsd - a.priceUsd);
+        console.log(combinedData)
+        console.log(combinedData)
         setAbts(combinedData)
         setDisplayedAbts(combinedData)
       }
+      setLoading(false)
     } catch (error) {
       console.error('Error loading marketplace items:', error);
-    } finally {
-      setLoading(false)
     }
   };
 
