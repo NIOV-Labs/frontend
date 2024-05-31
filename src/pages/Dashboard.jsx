@@ -97,7 +97,7 @@ const Dashboard = ({ client, market, abt }) => {
       <div className="w-full p-5 lg:p-10 grid grid-cols-1 min-[370px]:grid-cols-2 md:grid-cols-6 min-[1500px]:grid-cols-10 gap-4">
         <ABTContainer title={'Unclaimed Proceeds'} value={`$${userProceeds.usdPennyValue}`} badgeValue={`${userProceeds.rawValue} Ξ`} funds={userProceeds.rawValue !== 0} loading={loading} loadingProceeds={loadingProceeds} handleClaim={handleClaimingProceeds} />
         <ABTContainer title={'Total ABTs sold'} value={soldABTs} badgeValue={lastSaleDate} />
-        <ABTContainer title={'Gross Revenue'} value={'$' + grossRevenue} badgeValue={`${inflowPercentage.toFixed(2)}%`} handleExport={handleExportData} />
+        <ABTContainer title={'Gross Revenue'} value={'$' + grossRevenue} badgeValue={`${inflowPercentage ? inflowPercentage.toFixed(2) : 0}%`} handleExport={handleExportData} />
         <GraphContainer title={`Proceeds`} proceeds={tenProceeds} />
         <GraphContainer title={`Active Listing's`} />
         <DesktopGraphContainer proceeds={tenProceeds} histogramChartData={histogramChartData} chartOptions={chartOptions} />
