@@ -74,7 +74,7 @@ const MintABT = ({ client, setOpenMint }) => {
       </button>
       <div className="w-full pb-3 lg:col-span-2">
         <h1 className="text-xl font-semibold mb-1">Create an ABT</h1>
-        <p className="leading-5">Once your item has been minted, you will not be able to change any of its information</p>
+        <p className="leading-5 mb-2 lg:mb-3">Once your item has been minted, you will not be able to change any of its information</p>
         <ActiveSection headers={['Documents', 'Images']} active={activeSection} setActive={setActiveSection} />
       </div>
       {

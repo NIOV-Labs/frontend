@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const ActiveSection = ({ headers, active, setActive}) => {
   return (
-    <div className='flex justify-center items-center w-max mb-1 mt-2'>
+    <div className='flex justify-center items-center w-max'>
         {headers.map((title, index) => {
             return (
                 <Tab
@@ -25,10 +25,10 @@ const Tab = ({ selected, setSelected, title, tabNum}) => {
         <div className='relative w-full'>
             <button
                 onClick={() => setSelected(tabNum)}
-                className="relative z-0 flex w-full items-center justify-center border-b-4 border-slate-200 bg-white p-3 transition-colors hover:bg-slate-100 md:flex-col"
+                className="relative z-0 flex w-full items-center justify-center border-b-4 border-slate-200 bg-white p-1  transition-colors hover:bg-slate-100 md:flex-col"
             >
                 <span
-                    className={`w-[80px] lg:w-[100px] text-center text-sm text-slate-600 transition-opacity md:text-center ${
+                    className={`w-[70px] lg:w-[75px] text-center text-xs lg:text-sm text-slate-600 transition-opacity md:text-center ${
                         selected ? "opacity-100" : "opacity-50"
                     }`}
                 >
@@ -38,7 +38,7 @@ const Tab = ({ selected, setSelected, title, tabNum}) => {
             {selected && (
             <motion.span
             layoutId="tabs-features-underline"
-            className="absolute bottom-0 left-0 right-0 z-10 h-1 bg-indigo-600"
+            className="absolute bottom-0 left-0 right-0 z-10 h-1 bg-primary1"
             />
         )}
         </div>
