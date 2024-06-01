@@ -278,8 +278,8 @@ const DesktopGraphContainer = ({ proceeds, histogramChartData, chartOptions }) =
             <table className="border-2 border-slate-300 min-w-full bg-white">
               <thead className="border-0">
                 <tr>
-                  <th className="py-2 px-4 bg-[#F9FAFF] border-2">Value (USD)</th>
-                  <th className="py-2 px-4 bg-[#F9FAFF] border-2">Date</th>
+                  <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Value (USD)</th>
+                  <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Date</th>
                 </tr>
               </thead>
               <tbody>
