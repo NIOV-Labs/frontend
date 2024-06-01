@@ -25,7 +25,7 @@ const UserNavBar = ({client}) => {
       'path': 'dashboard'
     },
     {
-      'name': 'ABTs Projects',
+      'name': 'My ABTs',
       'icon': FaFile,
       'path': 'abts'
     },
