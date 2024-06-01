@@ -12,11 +12,11 @@ import Developer from './Developer';
 import Support from './Support';
 import ABTDetails from './ABTDetails';
 import chainConfig from '../../utils/ChainConfig.json'
-import Addresses from '../../utils/deploymentMap/31337.json'
 import ABTAbi from '../../utils/interfaces/AssetBoundToken.json'
 import MarketAbi from '../../utils/interfaces/NiovMarket.json'
 import MarketReaderAbi from '../../utils/interfaces/MarketReader.json'
 import { formatUnits } from 'ethers';
+import fs from 'fs';
 
 function App() {
   const [client, setClient] = useState({
@@ -57,10 +57,11 @@ function App() {
         balanceInEther,
         nativeCurrency
       })
-      loadContracts(signer)
+      loadContracts(signer. chainId)
   };
 
-  const loadContracts = async (signer) => {
+  const loadContracts = async (signer, chainId) => {
+    const Addresses = JSON.parse(fs.readFileSync(`../../utils/deploymentMap/${chainId}.json`));
     const abtContract = new ethers.Contract(Addresses.AssetBoundToken, ABTAbi.abi, signer);
     const marketContract = new ethers.Contract(Addresses.NiovMarket, MarketAbi.abi, signer);
     const readerContract = new ethers.Contract(Addresses.MarketReader, MarketReaderAbi.abi, signer)
