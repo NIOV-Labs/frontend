@@ -114,7 +114,7 @@ const Card = ({ title, description, image }) => {
                 marginRight: MARGIN,
               }}
         >
-            <div className="absolute flex flex-col justify-between items-start inset-0 z-20 rounded-lg bg-gradient-to-br from-[#F9F7FE]  to-[#ECE7FE] p-6 text-white">
+            <div className="absolute border-gray-200 border flex flex-col justify-between items-start inset-0 z-20 rounded-lg bg-gradient-to-br from-[#F9F7FE] to-[#ECE7FE] p-6 text-white">
                 <p className="my-2 min-[2000px]:my-0 text-xl font-bold text-black">{title}</p>
                 <div className='flex flex-col justify-center items-center'>
                     <img src={image} alt="" />
