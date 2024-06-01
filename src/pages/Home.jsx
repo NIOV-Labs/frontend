@@ -5,6 +5,8 @@ import WhatAbts from '../assets/WhatAbts.svg'
 import FDC from '../assets/FDC.svg'
 import Chainlink from '../assets/Chainlink.svg'
 import CardCarousel from '../components/HomeComponents/CardCarousel'
+import Card2 from '../components/HomeComponents/Card2'
+import Footer from '../components/HomeComponents/Footer'
 
 const Home = ({client, web3Handler, hasWeb3}) => {
   const cardInfo = [
@@ -47,6 +49,8 @@ const Home = ({client, web3Handler, hasWeb3}) => {
           )
         })}
         <CardCarousel />
+        <Card2 />
+        <Footer />
       </div>
     </>
   )
