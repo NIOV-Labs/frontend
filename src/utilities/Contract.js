@@ -24,19 +24,19 @@ export async function createABT(data) {
 }
 
 
-export async function fetchABT(id) {
+export async function fetchABT(id, chainId) {
   try {
-    const response = await fetch(`${BASE_URL}/token/${id}`, {
+    const response = await fetch(`${BASE_URL}/token/${id}?chainId=${chainId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    
+
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    
+
     const result = await response.json();
     return result;
   } catch (error) {
@@ -68,20 +68,20 @@ export async function createPDF(data) {
   }
 }
 
-export async function fetchABTs(ids) {
+export async function fetchABTs(ids, chainId) {
   try {
     const queryString = ids.join('&tokenIds=');
-    const response = await fetch(`${BASE_URL}/tokens?tokenIds=${queryString}`, {
+    const response = await fetch(`${BASE_URL}/tokens?tokenIds=${queryString}&chainId=${chainId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    
+
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    
+
     const result = await response.json();
     return result;
   } catch (error) {

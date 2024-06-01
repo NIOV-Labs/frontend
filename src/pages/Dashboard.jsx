@@ -55,7 +55,7 @@ const Dashboard = ({ client, market, abt, reader }) => {
         }));
         const userListings = listingsWithTokenId.filter(listing => listing[0].toLowerCase() === client.account.toLowerCase());
       
-        const abtMetadata = await fetchABTs(userListings.map(listing => listing.tokenId));
+        const abtMetadata = await fetchABTs(userListings.map(listing => listing.tokenId), client.chainId);
         const listingsWithMetadata = userListings.map(listing => ({
           ...listing,
           metadata: abtMetadata.find(metadata => metadata.onChainID === listing.tokenId)
