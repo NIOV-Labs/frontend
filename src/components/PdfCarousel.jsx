@@ -39,7 +39,7 @@ const Images = ({ documents, imgIndex}) => {
         <>
             {documents.map((document, idx) => {
                 return (
-                    <a key={idx} href={document.file} target="_blank" rel="noopener noreferrer" className={`${imgIndex !== idx && 'hidden'} w-80 md:w-[30rem] h-full grid place-content-center relative border-slate-400 border-[1px] overflow-hidden`}
+                    <a key={idx} href={document.file} target="_blank" rel="noopener noreferrer" className={`${imgIndex !== idx && 'hidden'} w-80 md:w-[26.8rem] h-full grid place-content-center relative border-slate-400 border-[1px] overflow-hidden`}
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
                     >
