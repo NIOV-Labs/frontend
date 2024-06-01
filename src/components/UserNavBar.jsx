@@ -34,26 +34,26 @@ const UserNavBar = ({client}) => {
       'icon': FaStore,
       'path': 'marketplace'
     },
-    {
-      'name': 'My Wallet',
-      'icon': FaWallet,
-      'path': 'myWallet'
-    },
-    {
-      'name': 'Settings',
-      'icon': IoMdSettings,
-      'path': 'settings'
-    },
-    {
-      'name': 'Developer',
-      'icon': FaCode,
-      'path': 'developer'
-    },
-    {
-      'name': 'Support',
-      'icon': MdLiveHelp,
-      'path': 'abt/1'
-    },
+    // {
+    //   'name': 'My Wallet',
+    //   'icon': FaWallet,
+    //   'path': 'myWallet'
+    // },
+    // {
+    //   'name': 'Settings',
+    //   'icon': IoMdSettings,
+    //   'path': 'settings'
+    // },
+    // {
+    //   'name': 'Developer',
+    //   'icon': FaCode,
+    //   'path': 'developer'
+    // },
+    // {
+    //   'name': 'Support',
+    //   'icon': MdLiveHelp,
+    //   'path': 'abt/1'
+    // },
   ]
 
   return (
@@ -125,13 +125,13 @@ const DropdownMenu  = ({ client, setIsMenuOpen, pageInfo, setHeaderPosition }) =
                     </div>
                 </div>
                 <div className='flex flex-col w-full'>
-                  <div className='flex flex-col gap-3 text-black items-start px-5 py-3 w-full'>
+                  {/* <div className='flex flex-col gap-3 text-black items-start px-5 py-3 w-full'>
                       {pageInfo.slice(-2).map((page, index) =>{
                         return (
                           <MenuLinks key={index} name={page.name} path={page.path} Icon={page.icon} setIsMenuOpen={setIsMenuOpen} setHeaderPosition={setHeaderPosition} idx={index} />
                         )
                       })}
-                    </div>
+                    </div> */}
                   <div className='w-full border-t-2 text-red-600 border-slate-300 px-5 py-3 flex justify-start items-center gap-2'>
                       <div className='text-lg  cursor-pointer'>
                           <FiLogOut />
@@ -210,13 +210,13 @@ const SideMenu = ({ pageInfo, setHeaderPosition}) => {
           })}
       </div>
       <div className='flex flex-col w-full'>
-      <div className='flex flex-col gap-3 text-black items-start px-10 py-7 w-full border-b-2 border-zinc-600 '>
+      {/* <div className='flex flex-col gap-3 text-black items-start px-10 py-7 w-full border-b-2 border-zinc-600 '>
             {pageInfo.slice(-2).map((page, index) =>{
               return (
                 <SideMenuLinks key={index} name={page.name} path={page.path} Icon={page.icon} setHeaderPosition={setHeaderPosition} idx={index + 5} />
               )
             })}
-        </div>
+        </div> */}
         <div className='w-full text-red-600  pl-10 py-7 flex justify-start items-center gap-2 cursor-pointer'>
             <div className='text-lg  cursor-pointer'>
                 <FiLogOut />
