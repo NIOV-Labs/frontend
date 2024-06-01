@@ -4,7 +4,7 @@ import PageHeader from "../components/PageHeader";
 import { FiChevronDown } from "react-icons/fi";
 import { MdArrowForwardIos, MdFilterList } from "react-icons/md";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import { getSoldABTs, getGrossRevenue, exportMarketplaceData } from "../utilities/Contract";
+import { getSoldABTs, getGrossRevenue, exportMarketplaceData, fetchABTs } from "../utilities/Contract";
 import Loader from "../components/Loader";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
@@ -53,8 +53,13 @@ const Dashboard = ({ client, market, abt, reader }) => {
           ...listing,
           tokenId: ids[index]
         }));
-        console.log(userListings);
-        setUserListings(userListings);
+        const abtMetadata = await fetchABTs(userListings.map(listing => listing.tokenId));
+        const listingsWithMetadata = userListings.map(listing => ({
+          ...listing,
+          metadata: abtMetadata.find(metadata => metadata.onChainID === listing.tokenId)
+        }));
+        console.log(listingsWithMetadata);
+        setUserListings(listingsWithMetadata);
       }
 
     } catch (error) {
@@ -235,14 +240,20 @@ const GraphContainer = ({ title, proceeds, listings }) => {
           <table className="border-2 border-slate-300 min-w-full bg-white">
             <thead>
               <tr>
-                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Token ID</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Preview</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">ID</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300" style={{ width: '40%' }}>Name</th>
                 <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Price (USD)</th>
               </tr>
             </thead>
             <tbody>
               {listings && listings.map((listing, index) => (
                 <tr key={index}>
+                  <td className="border py-2 px-4 border-0 text-center">
+                    <img src={`http://localhost:3000/uploads/${listing.metadata.images[0]}`} alt={listing.metadata.name} style={{ margin: 'auto', width: '100px', height: '100px' }} />
+                  </td>
                   <td className="border py-2 px-4 border-0 text-center">{listing.tokenId}</td>
+                  <td className="border py-2 px-4 border-0 text-center" style={{ width: '40%' }}>{listing.metadata.name}</td>
                   <td className="border py-2 px-4 border-0 text-center">${(Number(listing[1]) / 100).toLocaleString()}</td>
                 </tr>
               ))}
