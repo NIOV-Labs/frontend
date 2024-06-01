@@ -73,6 +73,9 @@ const ABTDetails = ({ client, market, abt }) => {
   }
   useEffect(() => {
     fetchABTDetails();
+    const interval = setInterval(fetchABTDetails, 45000); // Refresh every 45 seconds
+
+    return () => clearInterval(interval);
   }, []);
   
   const handleApproval = async () => {
