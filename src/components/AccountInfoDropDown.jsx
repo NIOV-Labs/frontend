@@ -1,6 +1,7 @@
 import metamask from '../assets/metamask.svg'
 
 const AccountInfoDropDown = ({ client }) => {
+  console.log(client)
     return (
       <div className="w-72 p-5 absolute top-full right-0 bg-[#2C2B29] text-white mt-7 rounded flex flex-col justify-center items-start gap-2">
         <div className="w-full flex justify-start items-center gap-4 px-3 pb-4 border-b-2 border-zinc-600">
@@ -8,7 +9,7 @@ const AccountInfoDropDown = ({ client }) => {
             <p className='text-md 2xl:text-lg'>{client.account.slice(0, 5) + '...' + client.account.slice(38, 42)}</p>
         </div>
         <InfoContainter header={'ChainId'} info={client.chainId} />
-        <InfoContainter header={'Balance'} info={`${client.balanceInEther}  ${client.nativeCurrency?.symbol}`} />
+        <InfoContainter header={'Balance'} info={`${client.balanceInEther} `} />
       </div>
     );
   };
