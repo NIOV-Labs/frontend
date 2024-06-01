@@ -4,6 +4,7 @@ import Card1 from '../components/HomeComponents/Card1'
 import WhatAbts from '../assets/WhatAbts.svg'
 import FDC from '../assets/FDC.svg'
 import Chainlink from '../assets/Chainlink.svg'
+import CardCarousel from '../components/HomeComponents/CardCarousel'
 
 const Home = ({client, web3Handler, hasWeb3}) => {
   const cardInfo = [
@@ -38,13 +39,14 @@ const Home = ({client, web3Handler, hasWeb3}) => {
   return (
     <>
       <HomeNavBar client={client} hasWeb3={hasWeb3} web3Handler={web3Handler}/>
-      <div className='mt-[4.5rem] xl:mt-[5rem] w-full mx-auto flex flex-col justify-center items-center lg:gap-10'>
+      <div className='mt-[4.5rem] xl:mt-[5rem] w-full mx-auto flex flex-col justify-center items-center lg:gap-10 overflow-hidden'>
         <Hero />
         {cardInfo.map((card, index) => {
           return (
             <Card1 key={index} title={card.title} description={card.description} button1={card.button1} button2={card.button2} image={card.image} gradient={card.imageBackground} direction={card.tileDirection} />
           )
         })}
+        <CardCarousel />
       </div>
     </>
   )
