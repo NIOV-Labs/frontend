@@ -59,7 +59,8 @@ const ABTDetails = ({ client, market, abt }) => {
             isApproved,
             signerIsSeller,
             priceUsd, 
-            priceGas
+            priceGas,
+            rawValueGas: listing[2]
         }
         console.log(data)
         setAbtInfo(data)
@@ -106,6 +107,7 @@ const ABTDetails = ({ client, market, abt }) => {
                 signerIsSeller: seller === client.signer.address,
                 priceUsd: (parseInt(usdPennyPrice) / 100).toFixed(2),
                 priceGas: (parseInt(rawValueGas) / 10 ** 18).toFixed(5),
+                rawValueGas,
             }));
         }
     } catch (err) {
@@ -122,6 +124,21 @@ const ABTDetails = ({ client, market, abt }) => {
       setPrice(value);
     }
   };
+
+  const handleBuyingAbt =  async (e) => {
+    e.preventDefault();
+    setLoadingFunction(true);
+    try {
+      await fetchABTDetails(); 
+    //   console.log(abt.target, id, abtInfo.rawValueGas);
+      await market.acceptAsk(abt.target, id, { value: abtInfo.rawValueGas });
+      await fetchABTDetails(); 
+    } catch (err) {
+      console.error('Error purchasing:', err);
+    } finally {
+      setLoadingFunction(false);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -179,6 +196,7 @@ const ABTDetails = ({ client, market, abt }) => {
                             <button
                                 type="submit"
                                 className="w-full bg-primary1 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded transition duration-300 ease-in-out"
+                                disabled={loadingFunction}
                             >
                                 {loadingFunction ? <LoaderTwo /> : 'Put for Sale'}
                             </button>
@@ -187,8 +205,9 @@ const ABTDetails = ({ client, market, abt }) => {
                         </div>
                     ) : (
                         <div
-                        onClick={handleApproval}
-                        className="w-full cursor-pointer bg-primary1 hover:bg-indigo-700 text-white font-semibold border-slate-400 border-[1px] p-3 lg:p-4 rounded flex justify-center items-center"
+                            onClick={handleApproval}
+                            className="w-full cursor-pointer bg-primary1 hover:bg-indigo-700 text-white font-semibold border-slate-400 border-[1px] p-3 lg:p-4 rounded flex justify-center items-center"
+                            disabled={loadingFunction}
                         >
                         {loadingFunction ? <LoaderTwo /> : 'Approve for Market'}
                         </div>
@@ -207,9 +226,11 @@ const ABTDetails = ({ client, market, abt }) => {
                             </div>
                         </div>
                         <button
-                            className="flex-1 w-full sm:max-w-96 lg:max-w-full bg-accent3 text-white font-semibold py-3 px-4 rounded transition duration-300 ease-in-out"
+                            onClick={handleBuyingAbt}
+                            className="flex-1 w-full sm:max-w-96 lg:max-w-full bg-green-500 text-white font-semibold py-3 px-4 rounded transition duration-300 ease-in-out"
+                            disabled={loadingFunction}
                         >
-                            Make Offer
+                            Buy Now
                         </button>
                     </div>
                 ) : (
@@ -225,15 +246,3 @@ const ABTDetails = ({ client, market, abt }) => {
 };
 
 export default ABTDetails;
-
-
- // listing = await market.readListing(abt.target, id)
-        // console.log(listing)
-    // const approved = await abt.getApproved(id)
-    // console.log(approved === market.target)
-    // const holder = await abt.ownerOf(id)
-    // console.log(holder===client.signer.address)
-    // const listing = await market.readListing(abt.target, id)
-    // console.log(listing)
-    // const tx = await market.createListing(abt.target, id, pennyAmount)
-    // console.log(tx)
