@@ -30,7 +30,7 @@ const Dashboard = ({ client, market, abt, reader }) => {
       setLoading(true);
       const proceeds = await market.checkProceeds(client.account);
       setUserProceeds({
-        rawValue: parseInt(proceeds.rawValue) / (10 ** 18),
+        rawValue: (parseInt(proceeds.rawValue) / (10 ** 18)).toFixed(5),
         usdPennyValue: (parseInt(proceeds.usdPennyValue.toString()) / 100).toFixed(2)
       });
 
