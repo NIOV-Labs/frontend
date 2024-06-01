@@ -8,8 +8,9 @@ import { getSoldABTs, getGrossRevenue, exportMarketplaceData } from "../utilitie
 import Loader from "../components/Loader";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
+import Addresses from '../../utils/deploymentMap/31337.json';
 
-const Dashboard = ({ client, market, abt }) => {
+const Dashboard = ({ client, market, abt, reader }) => {
   const [revenueTime, setRevenueTime] = useState('Yearly');
   const revenueTimeFrames = ['Yearly', 'Monthly', 'Weekly', 'Daily'];
   const [userProceeds, setUserProceeds] = useState({ rawValue: 0, usdPennyValue: '0' });
@@ -21,10 +22,17 @@ const Dashboard = ({ client, market, abt }) => {
   const [lastSaleDate, setLastSaleDate] = useState('Never');
   const [tenProceeds, setTenProceeds] = useState([]);
   const [histogramData, setHistogramData] = useState([]);
+  const [userListings, setUserListings] = useState([]);
 
   const loadDashboardItems = async () => {
     try {
       setLoading(true);
+      const proceeds = await market.checkProceeds(client.account);
+      setUserProceeds({
+        rawValue: parseInt(proceeds.rawValue) / (10 ** 18),
+        usdPennyValue: (parseInt(proceeds.usdPennyValue.toString()) / 100).toFixed(2)
+      });
+
       const soldResponse = await getSoldABTs(client.account);
       setSoldABTs(soldResponse.soldABTs);
       setLastSaleDate(soldResponse.lastSaleDate ? calculateTimeSince(soldResponse.lastSaleDate) : 'Never');
@@ -34,6 +42,21 @@ const Dashboard = ({ client, market, abt }) => {
       setInflowPercentage(revenueResponse.inflowPercentage);
       setTenProceeds(revenueResponse.tenProceeds); // Set the last ten proceeds
       setHistogramData(revenueResponse.histogram); // Set the histogram data
+
+      const tokens = await abt.numTokens();
+      const numTokens = parseInt(tokens);
+      if (numTokens > 0) {
+        const ids = Array.from({ length: numTokens }, (_, index) => index + 1);
+        const abtListingInfo = await reader.readListings(Addresses.AssetBoundToken, ids);
+        const listingsWithTokenId = abtListingInfo.filter(listing => listing.seller.toLowerCase() === client.account.toLowerCase());
+        const userListings = listingsWithTokenId.map((listing, index) => ({
+          ...listing,
+          tokenId: ids[index]
+        }));
+        console.log(userListings);
+        setUserListings(userListings);
+      }
+
     } catch (error) {
       console.error('Error loading dashboard items:', error);
     } finally {
@@ -95,11 +118,11 @@ const Dashboard = ({ client, market, abt }) => {
     <>
       <PageHeader title={'Dashboard'} />
       <div className="w-full p-5 lg:p-10 grid grid-cols-1 min-[370px]:grid-cols-2 md:grid-cols-6 min-[1500px]:grid-cols-10 gap-4">
-        <ABTContainer title={'Unclaimed Proceeds'} value={`$${userProceeds.usdPennyValue}`} badgeValue={`${userProceeds.rawValue} Ξ`} funds={userProceeds.rawValue !== 0} loading={loading} loadingProceeds={loadingProceeds} handleClaim={handleClaimingProceeds} />
+        <ABTContainer title={'Unclaimed Proceeds'} value={`$${userProceeds.usdPennyValue.toLocaleString()}`} badgeValue={`${userProceeds.rawValue} Ξ`} funds={userProceeds.rawValue !== 0} loading={loading} loadingProceeds={loadingProceeds} handleClaim={handleClaimingProceeds} />
         <ABTContainer title={'Total ABTs sold'} value={soldABTs} badgeValue={lastSaleDate} />
-        <ABTContainer title={'Gross Revenue'} value={'$' + grossRevenue} badgeValue={`${inflowPercentage ? inflowPercentage.toFixed(2) : 0}%`} handleExport={handleExportData} />
+        <ABTContainer title={'Gross Revenue'} value={'$' + grossRevenue.toLocaleString()} badgeValue={`${inflowPercentage ? inflowPercentage.toFixed(2) : 0}%`} handleExport={handleExportData} />
         <GraphContainer title={`Proceeds`} proceeds={tenProceeds} />
-        <GraphContainer title={`Active Listing's`} />
+        <GraphContainer title={`Active Listings`} listings={userListings} />
         <DesktopGraphContainer proceeds={tenProceeds} histogramChartData={histogramChartData} chartOptions={chartOptions} />
       </div>
     </>
@@ -167,9 +190,9 @@ const ABTContainer = ({ title, value, badgeValue, handleExport, funds, loading, 
   );
 };
 
-const GraphContainer = ({ title, proceeds }) => {
+const GraphContainer = ({ title, proceeds, listings }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const activeListing = title === `Active Listing's`;
+  const activeListing = title === `Active Listings`;
   const pending = title === `Pending Offers`;
 
   return (
@@ -194,15 +217,33 @@ const GraphContainer = ({ title, proceeds }) => {
           <table className="min-w-full bg-white">
             <thead>
               <tr>
-                <th className="py-2 px-4 bg-gray-200">Value (USD)</th>
-                <th className="py-2 px-4 bg-gray-200">Date</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Value (USD)</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Date</th>
               </tr>
             </thead>
             <tbody>
               {proceeds && proceeds.map((proceed, index) => (
                 <tr key={index}>
-                  <td className="border py-2 px-4">${(proceed.usdPennyValue / 100).toFixed(2)}</td>
-                  <td className="border py-2 px-4">{calculateTimeSince(proceed.timestamp)}</td>
+                  <td className="border py-2 px-4 border-0">${Number(proceed.usdPennyValue) / 100}</td>
+                  <td className="border py-2 px-4 border-0">{calculateTimeSince(proceed.timestamp)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {title === 'Active Listings' && (
+          <table className="border-2 border-slate-300 min-w-full bg-white">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Token ID</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Price (USD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {listings && listings.map((listing, index) => (
+                <tr key={index}>
+                  <td className="border py-2 px-4 border-0 text-center">{listing.tokenId}</td>
+                  <td className="border py-2 px-4 border-0 text-center">${(Number(listing[1]) / 100).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -212,6 +253,7 @@ const GraphContainer = ({ title, proceeds }) => {
     </div>
   );
 };
+
 
 const DesktopGraphContainer = ({ proceeds, histogramChartData, chartOptions }) => {
   return (
