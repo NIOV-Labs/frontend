@@ -28,7 +28,7 @@ const Marketplace = ({ abt, market, client, reader }) => {
       if (numTokens > 0) {
         const ids = Array.from({ length: numTokens }, (_, index) => index + 1);
         //call to backend for metadata`
-        const abtMetadata = await fetchABTs(ids); 
+        const abtMetadata = await fetchABTs(ids, client.chainId); 
         
         const processedMetadata = abtMetadata.map(metadata => {
           // Prepend dataURL to each image

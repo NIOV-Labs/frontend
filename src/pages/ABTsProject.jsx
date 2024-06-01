@@ -26,7 +26,7 @@ const ABTsProject = ({client, market, abt, reader}) => {
       if (results.tokenIds.length > 0) {
         const tokenIds = results.tokenIds
         const tokenArray = Object.values(tokenIds).map(value => parseInt(value));
-        const abtMetadata = await fetchABTs(tokenArray);
+        const abtMetadata = await fetchABTs(tokenArray, client.chainId);
 
         const processedMetadata = abtMetadata.map(metadata => {
           const updatedImages = metadata.images.map(image => `${dataURL}${image}`);

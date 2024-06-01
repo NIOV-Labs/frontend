@@ -25,7 +25,7 @@ const ABTDetails = ({ client, market, abt }) => {
 
   const fetchABTDetails = async () => {
     try {
-        const response = await fetchABT(id);
+        const response = await fetchABT(id, client.chainId);
         // console.log(response)
 
         //handling images

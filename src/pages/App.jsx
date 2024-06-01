@@ -52,7 +52,7 @@ function App() {
     setClient({
       account: account,
       signer: signer,
-      chainId: parseInt(chainId, 16),
+      chainId: chainId,
       provider: provider,
       balanceInEther,
       nativeCurrency
