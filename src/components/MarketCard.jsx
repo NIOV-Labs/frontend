@@ -19,12 +19,14 @@ const MarketCard = ({abt}) => {
                 </div>
                 <h1 className="text-lg lg:text-xl">{abt.name}</h1>
             </div>
-            <div className="flex flex-col justify-center items-start ">
-                <div className='flex justify-start gap-1 items-center'>
-                    <p className='text-sm lg:text-md text-stone-500'>Price</p>
+            {abt.priceUsd > 0 && 
+                <div className="flex flex-col justify-center items-start ">
+                    <div className='flex justify-start gap-1 items-center'>
+                        <p className='text-sm lg:text-md text-stone-500'>Price</p>
+                    </div>
+                    <h1 className="text-lg lg:text-xl">$ {abt.priceUsd}</h1>
                 </div>
-                <h1 className="text-lg lg:text-xl">$ {abt.priceUsd}</h1>
-            </div>
+            }
         </div>
     </Link>
   )

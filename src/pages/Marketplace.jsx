@@ -104,10 +104,14 @@ const Marketplace = ({ abt, market, client, reader }) => {
 
   useEffect(() => {
     loadMarketplaceItems();
+    const interval = setInterval(loadMarketplaceItems, 45000); // Refresh every 45 seconds
+
+    return () => clearInterval(interval);
   }, []); 
 
   useEffect(() => {
     applyFilters();
+    
   }, [abts, listedFilter, priceFilter]);
 
   if (loading) {
