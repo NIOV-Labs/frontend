@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import DropDownMenu from "../components/DropDownMenu";
 import PageHeader from "../components/PageHeader";
 import { FiChevronDown } from "react-icons/fi";
 import { MdArrowForwardIos, MdFilterList } from "react-icons/md";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import { getSoldABTs, getGrossRevenue, exportMarketplaceData } from "../utilities/Contract";
+import { getSoldABTs, getGrossRevenue, exportMarketplaceData, fetchABTs } from "../utilities/Contract";
 import Loader from "../components/Loader";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
+import Addresses from '../../utils/deploymentMap/31337.json';
 
-const Dashboard = ({ client, market, abt }) => {
+const Dashboard = ({ client, market, abt, reader }) => {
   const [revenueTime, setRevenueTime] = useState('Yearly');
   const revenueTimeFrames = ['Yearly', 'Monthly', 'Weekly', 'Daily'];
   const [userProceeds, setUserProceeds] = useState({ rawValue: 0, usdPennyValue: '0' });
@@ -21,10 +23,17 @@ const Dashboard = ({ client, market, abt }) => {
   const [lastSaleDate, setLastSaleDate] = useState('Never');
   const [tenProceeds, setTenProceeds] = useState([]);
   const [histogramData, setHistogramData] = useState([]);
+  const [userListings, setUserListings] = useState([]);
 
   const loadDashboardItems = async () => {
     try {
       setLoading(true);
+      const proceeds = await market.checkProceeds(client.account);
+      setUserProceeds({
+        rawValue: parseInt(proceeds.rawValue) / (10 ** 18),
+        usdPennyValue: (parseInt(proceeds.usdPennyValue.toString()) / 100).toFixed(2)
+      });
+
       const soldResponse = await getSoldABTs(client.account);
       setSoldABTs(soldResponse.soldABTs);
       setLastSaleDate(soldResponse.lastSaleDate ? calculateTimeSince(soldResponse.lastSaleDate) : 'Never');
@@ -34,6 +43,26 @@ const Dashboard = ({ client, market, abt }) => {
       setInflowPercentage(revenueResponse.inflowPercentage);
       setTenProceeds(revenueResponse.tenProceeds); // Set the last ten proceeds
       setHistogramData(revenueResponse.histogram); // Set the histogram data
+
+      const tokens = await abt.numTokens();
+      const numTokens = parseInt(tokens);
+      if (numTokens > 0) {
+        const ids = Array.from({ length: numTokens }, (_, index) => index + 1);
+        const abtListingInfo = await reader.readListings(Addresses.AssetBoundToken, ids);
+        const listingsWithTokenId = abtListingInfo.map((listing, index) => ({
+          ...listing,
+          tokenId: ids[index]
+        }));
+        const userListings = listingsWithTokenId.filter(listing => listing[0].toLowerCase() === client.account.toLowerCase());
+      
+        const abtMetadata = await fetchABTs(userListings.map(listing => listing.tokenId));
+        const listingsWithMetadata = userListings.map(listing => ({
+          ...listing,
+          metadata: abtMetadata.find(metadata => metadata.onChainID === listing.tokenId)
+        }));
+        setUserListings(listingsWithMetadata);
+      }
+
     } catch (error) {
       console.error('Error loading dashboard items:', error);
     } finally {
@@ -95,11 +124,11 @@ const Dashboard = ({ client, market, abt }) => {
     <>
       <PageHeader title={'Dashboard'} />
       <div className="w-full p-5 lg:p-10 grid grid-cols-1 min-[370px]:grid-cols-2 md:grid-cols-6 min-[1500px]:grid-cols-10 gap-4">
-        <ABTContainer title={'Unclaimed Proceeds'} value={`$${userProceeds.usdPennyValue}`} badgeValue={`${userProceeds.rawValue} Ξ`} funds={userProceeds.rawValue !== 0} loading={loading} loadingProceeds={loadingProceeds} handleClaim={handleClaimingProceeds} />
+        <ABTContainer title={'Unclaimed Proceeds'} value={`$${userProceeds.usdPennyValue.toLocaleString()}`} badgeValue={`${userProceeds.rawValue} Ξ`} funds={userProceeds.rawValue !== 0} loading={loading} loadingProceeds={loadingProceeds} handleClaim={handleClaimingProceeds} />
         <ABTContainer title={'Total ABTs sold'} value={soldABTs} badgeValue={lastSaleDate} />
-        <ABTContainer title={'Gross Revenue'} value={'$' + grossRevenue} badgeValue={`${inflowPercentage ? inflowPercentage.toFixed(2) : 0}%`} handleExport={handleExportData} />
+        <ABTContainer title={'Gross Revenue'} value={'$' + grossRevenue.toLocaleString()} badgeValue={`${inflowPercentage ? inflowPercentage.toFixed(2) : 0}%`} handleExport={handleExportData} />
         <GraphContainer title={`Proceeds`} proceeds={tenProceeds} />
-        <GraphContainer title={`Active Listing's`} />
+        <GraphContainer title={`Active Listings`} listings={userListings} />
         <DesktopGraphContainer proceeds={tenProceeds} histogramChartData={histogramChartData} chartOptions={chartOptions} />
       </div>
     </>
@@ -167,10 +196,15 @@ const ABTContainer = ({ title, value, badgeValue, handleExport, funds, loading, 
   );
 };
 
-const GraphContainer = ({ title, proceeds }) => {
+const GraphContainer = ({ title, proceeds, listings }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const activeListing = title === `Active Listing's`;
+  const activeListing = title === `Active Listings`;
   const pending = title === `Pending Offers`;
+  const navigate = useNavigate();
+
+  const handleRowClick = (tokenId) => {
+    navigate(`/abt/${tokenId}`);
+  };
 
   return (
     <div className={`w-full col-span-1 min-[370px]:col-span-2 ${activeListing ? 'md:col-span-6' : 'md:col-span-3 min-[1500px]:col-span-4'} ${!activeListing && 'min-[1500px]:hidden'}`}>
@@ -194,15 +228,39 @@ const GraphContainer = ({ title, proceeds }) => {
           <table className="min-w-full bg-white">
             <thead>
               <tr>
-                <th className="py-2 px-4 bg-gray-200">Value (USD)</th>
-                <th className="py-2 px-4 bg-gray-200">Date</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Value (USD)</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Date</th>
               </tr>
             </thead>
             <tbody>
               {proceeds && proceeds.map((proceed, index) => (
                 <tr key={index}>
-                  <td className="border py-2 px-4">${(proceed.usdPennyValue / 100).toFixed(2)}</td>
-                  <td className="border py-2 px-4">{calculateTimeSince(proceed.timestamp)}</td>
+                  <td className="border py-2 px-4 border-0">${Number(proceed.usdPennyValue) / 100}</td>
+                  <td className="border py-2 px-4 border-0">{calculateTimeSince(proceed.timestamp)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {title === 'Active Listings' && (
+          <table className="border-2 border-slate-300 min-w-full bg-white">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Preview</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">ID</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300" style={{ width: '40%' }}>Name</th>
+                <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Price (USD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {listings && listings.map((listing, index) => (
+                <tr key={index} className="cursor-pointer hover:bg-gray-200" onClick={() => handleRowClick(listing.tokenId)}>
+                  <td className="border py-2 px-4 border-0 text-center">
+                    <img src={`http://localhost:3000/uploads/${listing.metadata.images[0]}`} alt={listing.metadata.name} style={{ margin: 'auto', width: 'auto', height: '100px' }} />
+                  </td>
+                  <td className="border py-2 px-4 border-0 text-center">{listing.tokenId}</td>
+                  <td className="border py-2 px-4 border-0 text-center" style={{ width: '40%' }}>{listing.metadata.name}</td>
+                  <td className="border py-2 px-4 border-0 text-center">${(Number(listing[1]) / 100).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -212,6 +270,7 @@ const GraphContainer = ({ title, proceeds }) => {
     </div>
   );
 };
+
 
 const DesktopGraphContainer = ({ proceeds, histogramChartData, chartOptions }) => {
   return (
@@ -236,8 +295,8 @@ const DesktopGraphContainer = ({ proceeds, histogramChartData, chartOptions }) =
             <table className="border-2 border-slate-300 min-w-full bg-white">
               <thead className="border-0">
                 <tr>
-                  <th className="py-2 px-4 bg-[#F9FAFF] border-2">Value (USD)</th>
-                  <th className="py-2 px-4 bg-[#F9FAFF] border-2">Date</th>
+                  <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Value (USD)</th>
+                  <th className="py-2 px-4 bg-[#F9FAFF] border-2 border-slate-300">Date</th>
                 </tr>
               </thead>
               <tbody>
