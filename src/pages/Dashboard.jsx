@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import DropDownMenu from "../components/DropDownMenu";
 import PageHeader from "../components/PageHeader";
 import { FiChevronDown } from "react-icons/fi";
@@ -48,17 +49,17 @@ const Dashboard = ({ client, market, abt, reader }) => {
       if (numTokens > 0) {
         const ids = Array.from({ length: numTokens }, (_, index) => index + 1);
         const abtListingInfo = await reader.readListings(Addresses.AssetBoundToken, ids);
-        const listingsWithTokenId = abtListingInfo.filter(listing => listing.seller.toLowerCase() === client.account.toLowerCase());
-        const userListings = listingsWithTokenId.map((listing, index) => ({
+        const listingsWithTokenId = abtListingInfo.map((listing, index) => ({
           ...listing,
           tokenId: ids[index]
         }));
+        const userListings = listingsWithTokenId.filter(listing => listing[0].toLowerCase() === client.account.toLowerCase());
+      
         const abtMetadata = await fetchABTs(userListings.map(listing => listing.tokenId));
         const listingsWithMetadata = userListings.map(listing => ({
           ...listing,
           metadata: abtMetadata.find(metadata => metadata.onChainID === listing.tokenId)
         }));
-        console.log(listingsWithMetadata);
         setUserListings(listingsWithMetadata);
       }
 
@@ -199,6 +200,11 @@ const GraphContainer = ({ title, proceeds, listings }) => {
   const [isOpen, setIsOpen] = useState(false);
   const activeListing = title === `Active Listings`;
   const pending = title === `Pending Offers`;
+  const navigate = useNavigate();
+
+  const handleRowClick = (tokenId) => {
+    navigate(`/abt/${tokenId}`);
+  };
 
   return (
     <div className={`w-full col-span-1 min-[370px]:col-span-2 ${activeListing ? 'md:col-span-6' : 'md:col-span-3 min-[1500px]:col-span-4'} ${!activeListing && 'min-[1500px]:hidden'}`}>
@@ -248,9 +254,9 @@ const GraphContainer = ({ title, proceeds, listings }) => {
             </thead>
             <tbody>
               {listings && listings.map((listing, index) => (
-                <tr key={index}>
+                <tr key={index} className="cursor-pointer hover:bg-gray-200" onClick={() => handleRowClick(listing.tokenId)}>
                   <td className="border py-2 px-4 border-0 text-center">
-                    <img src={`http://localhost:3000/uploads/${listing.metadata.images[0]}`} alt={listing.metadata.name} style={{ margin: 'auto', width: '100px', height: '100px' }} />
+                    <img src={`http://localhost:3000/uploads/${listing.metadata.images[0]}`} alt={listing.metadata.name} style={{ margin: 'auto', width: 'auto', height: '100px' }} />
                   </td>
                   <td className="border py-2 px-4 border-0 text-center">{listing.tokenId}</td>
                   <td className="border py-2 px-4 border-0 text-center" style={{ width: '40%' }}>{listing.metadata.name}</td>
