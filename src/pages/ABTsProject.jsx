@@ -9,7 +9,7 @@ import ActiveSection from "../components/ActiveSection";
 import MarketCard from "../components/MarketCard";
 import PageLoader from "./PageLoader";
 
-const dataURL = 'https://beta.niovlabs.io/uploads/'
+const dataURL = 'https://beta.niovlabs.io/api/uploads/'
 
 const ABTsProject = ({client, market, abt, reader}) => {
   const [myABTs, setMyABTs] = useState([])
