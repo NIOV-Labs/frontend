@@ -8,6 +8,7 @@ import { fetchABTs } from "../utilities/Contract";
 import ActiveSection from "../components/ActiveSection";
 import MarketCard from "../components/MarketCard";
 import PageLoader from "./PageLoader";
+import MyAbts from '../assets/MyAbts.png'
 
 const dataURL = 'http://localhost:3000/uploads/'
 
@@ -153,8 +154,8 @@ const ABTsProject = ({client, market, abt, reader}) => {
             </>
           ) : (
             <div className="flex justify-center items-center gap-6 flex-col border-[1px] rounded-sm border-slate-300 p-3 sm:p-12 md:p-18">
-              <div className="w-full sm:w-80 md:w-96 flex justify-center items-center h-44 sm:h-52 md:h-64 bg-slate-100 border-slate-400 border-[1px]">
-                image placeholder
+              <div className="w-full sm:w-80 md:w-96 flex justify-center items-center h-44 sm:h-52 md:h-64 bg-gradient-to-tr from-[#f0fdf5] via-[#e6faf9] to-[#f0fdf5] border-slate-400 border-[1px]">
+                <img src={MyAbts} className="w-40 md:w-52 2xl:w-72" />
               </div>
               <div className="flex flex-col justify-center items-center">
                 <h1 className="text-lg font-medium pb-[1px]">Get started with ABTs</h1>
