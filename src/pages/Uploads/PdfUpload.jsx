@@ -5,7 +5,7 @@ import { FaCheck } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 
 const apiUrl = 'https://beta.niovlabs.io/api/upload';
-const dataURL = 'https://beta.niovlabs.io';
+const dataURL = 'https://beta.niovlabs.io/api';
 const chunkSize = 10 * 1024; 
 
 const Upload = ({ label, setPdfFile, pdfFile, setUploaded, uploaded, name, setPdfFilePath, setPdfImagePath, setDocuments }) => {

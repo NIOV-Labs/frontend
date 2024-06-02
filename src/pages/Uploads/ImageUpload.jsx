@@ -4,7 +4,7 @@ import Loader from "../../components/Loader";
 import { FaCheck } from "react-icons/fa";
 
 const apiUrl = 'https://beta.niovlabs.io/api/upload';
-const dataURL = 'https://beta.niovlabs.io';
+const dataURL = 'https://beta.niovlabs.io/api';
 const chunkSize = 10 * 1024;
 
 const ImageUpload = ({ label, setImageViewPaths, imageViewPaths, name }) => {

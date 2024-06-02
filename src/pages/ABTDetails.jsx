@@ -8,7 +8,7 @@ import ImageCarousel from '../components/ImageCarousel';
 import LoaderTwo from '../components/LoaderTwo';
 import { ethers } from 'ethers';
 
-const dataURL = 'https://beta.niovlabs.io/uploads/'
+const dataURL = 'https://beta.niovlabs.io/api/uploads/'
 
 const ABTDetails = ({ client, market, abt }) => {
   const { id } = useParams();
