@@ -10,7 +10,7 @@ import GridOption from "../components/GridOption";
 import MarketCard from "../components/MarketCard";
 import { BACKEND_URL } from "../utilities/BackendURL";
 
-const dataURL = `${BACKEND_URL}/uploads/`
+const dataURL = `${BACKEND_URL}/api/uploads/`
 
 const Marketplace = ({ abt, market, client, reader }) => {
   const [abts, setAbts] = useState([]);
@@ -29,7 +29,7 @@ const Marketplace = ({ abt, market, client, reader }) => {
         const ids = Array.from({ length: numTokens }, (_, index) => index + 1);
         //call to backend for metadata`
         const abtMetadata = await fetchABTs(ids, client.chainId); 
-        console.log({abtMetadata})
+        // console.log({abtMetadata})
         
         const processedMetadata = abtMetadata.map(metadata => {
           // Prepend dataURL to each image
@@ -50,7 +50,7 @@ const Marketplace = ({ abt, market, client, reader }) => {
 
         //call to smart contracts for listing info
         const abtListingInfo = await reader.readListings(Addresses.AssetBoundToken, ids);
-        console.log({abtListingInfo})
+        // console.log({abtListingInfo})
         // console.log({abtListingInfo})
 
         //fetch owner info for each token
@@ -67,7 +67,7 @@ const Marketplace = ({ abt, market, client, reader }) => {
           owner: owners[index]
           // rawValueTkn: parseInt(abtListingInfo[index].rawValueTkn)
         }));
-        console.log({combinedData})
+        // console.log({combinedData})
         // Sort combinedData by priceUsd from highest to lowest as default
         combinedData.sort((a, b) => b.priceUsd - a.priceUsd);
         // console.log(combinedData)

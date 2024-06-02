@@ -29,7 +29,6 @@ const Dashboard = ({ client, market, abt, reader }) => {
   const loadDashboardItems = async () => {
     try {
       setLoading(true);
-      console.log(market)
       const proceeds = await market.checkProceeds(client.account);
       setUserProceeds({
         rawValue: (parseInt(proceeds.rawValue) / (10 ** 18)).toFixed(5),
@@ -266,7 +265,7 @@ const GraphContainer = ({ title, proceeds, listings }) => {
               {listings && listings.map((listing, index) => (
                 <tr key={index} className="cursor-pointer hover:bg-gray-200" onClick={() => handleRowClick(listing.tokenId)}>
                   <td className="py-2 px-4 border-0 text-center">
-                    <img src={`${BACKEND_URL}/uploads/${listing.metadata.images[0]}`} alt={listing.metadata.name} style={{ margin: 'auto', width: 'auto', height: '100px' }} />
+                    <img src={`${BACKEND_URL}/api/uploads/${listing.metadata.images[0]}`} alt={listing.metadata.name} style={{ margin: 'auto', width: 'auto', height: '100px' }} />
                   </td>
                   <td className="py-2 px-4 border-0 text-center">{listing.tokenId}</td>
                   <td className="py-2 px-4 border-0 text-center" style={{ width: '40%' }}>{listing.metadata.name}</td>

@@ -58,7 +58,7 @@ const ImageUpload = ({ label, setImageViewPaths, imageViewPaths, name }) => {
             };
 
             try {
-                console.log(`Uploading chunk ${chunkIndex + 1} of ${totalChunks}`);
+                // console.log(`Uploading chunk ${chunkIndex + 1} of ${totalChunks}`);
                 const response = await axios.post(apiUrl, payload, {
                     headers: { 'Content-Type': 'application/octet-stream' }
                 });

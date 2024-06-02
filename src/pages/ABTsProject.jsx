@@ -12,7 +12,7 @@ import MyAbts from '../assets/MyAbts.png'
 import { BACKEND_URL } from "../utilities/BackendURL";
 
 // const dataURL = 'https://beta.niovlabs.io/uploads/'
-const dataURL = `${BACKEND_URL}/uploads/`
+const dataURL = `${BACKEND_URL}/api/uploads/`
 
 const ABTsProject = ({client, market, abt, reader}) => {
   const [myABTs, setMyABTs] = useState([])
