@@ -1,8 +1,8 @@
 const BASE_URL = 'https://beta.niovlabs.io/api';
 
-export async function createABT(data, chainId) {
+export async function createABT(data) {
   try {
-    const response = await fetch(`${BASE_URL}/token/0?chainId=${chainId}`, {
+    const response = await fetch(`${BASE_URL}/token/0`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
