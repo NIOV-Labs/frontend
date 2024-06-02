@@ -3,9 +3,10 @@ import axios from "axios";
 import Loader from "../../components/Loader";
 import { FaCheck } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
+import { BACKEND_URL } from "../../utilities/BackendURL";
 
-const apiUrl = 'http://localhost:3000/api/upload';
-const dataURL = 'http://localhost:3000';
+const apiUrl = `${BACKEND_URL}/api/upload`;
+const dataURL = `${BACKEND_URL}`;
 const chunkSize = 10 * 1024; 
 
 const Upload = ({ label, setPdfFile, pdfFile, setUploaded, uploaded, name, setPdfFilePath, setPdfImagePath, setDocuments }) => {

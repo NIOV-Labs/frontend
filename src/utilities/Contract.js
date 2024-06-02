@@ -1,8 +1,10 @@
-const BASE_URL = 'http://localhost:3000/api';
+import { BACKEND_URL } from "./BackendURL";
 
-export async function createABT(data) {
+const BASE_URL = `${BACKEND_URL}/api`;
+
+export async function createABT(data, chainId) {
   try {
-    const response = await fetch(`${BASE_URL}/token/0`, {
+    const response = await fetch(`${BASE_URL}/token/0?chainId=${chainId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -11,7 +13,7 @@ export async function createABT(data) {
     });
 
     if (!response.ok) {
-      console.log(response)
+      console.log(response);
       throw new Error('Network response was not ok');
     }
 
@@ -22,7 +24,6 @@ export async function createABT(data) {
     throw error;
   }
 }
-
 
 export async function fetchABT(id, chainId) {
   try {
@@ -56,7 +57,7 @@ export async function createPDF(data) {
     });
 
     if (!response.ok) {
-      console.log(response)
+      console.log(response);
       throw new Error('Network response was not ok');
     }
 
@@ -70,8 +71,8 @@ export async function createPDF(data) {
 
 export async function fetchABTs(ids, chainId) {
   try {
-    const queryString = ids.join('&tokenIds=');
-    const response = await fetch(`${BASE_URL}/tokens?tokenIds=${queryString}&chainId=${chainId}`, {
+    const queryString = ids.map(id => `tokenIds=${id}`).join('&');
+    const response = await fetch(`${BASE_URL}/tokens?${queryString}&chainId=${chainId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -90,9 +91,9 @@ export async function fetchABTs(ids, chainId) {
   }
 }
 
-export async function getSoldABTs(wallet) {
+export async function getSoldABTs(wallet, chainId) {
   try {
-    const response = await fetch(`${BASE_URL}/soldABTs?wallet=${wallet}`, {
+    const response = await fetch(`${BASE_URL}/soldABTs?wallet=${wallet}&chainId=${chainId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -111,9 +112,9 @@ export async function getSoldABTs(wallet) {
   }
 }
 
-export async function getGrossRevenue(wallet) {
+export async function getGrossRevenue(wallet, chainId) {
   try {
-    const response = await fetch(`${BASE_URL}/grossRevenue?wallet=${wallet}`, {
+    const response = await fetch(`${BASE_URL}/grossRevenue?wallet=${wallet}&chainId=${chainId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -132,9 +133,9 @@ export async function getGrossRevenue(wallet) {
   }
 }
 
-export async function exportMarketplaceData(wallet) {
+export async function exportMarketplaceData(wallet, chainId) {
   try {
-    const response = await fetch(`${BASE_URL}/exportMarketplaceData?wallet=${wallet}`, {
+    const response = await fetch(`${BASE_URL}/exportMarketplaceData?wallet=${wallet}&chainId=${chainId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -9,8 +9,10 @@ import ActiveSection from "../components/ActiveSection";
 import MarketCard from "../components/MarketCard";
 import PageLoader from "./PageLoader";
 import MyAbts from '../assets/MyAbts.png'
+import { BACKEND_URL } from "../utilities/BackendURL";
 
-const dataURL = 'http://localhost:3000/uploads/'
+// const dataURL = 'https://beta.niovlabs.io/uploads/'
+const dataURL = `${BACKEND_URL}/uploads/`
 
 const ABTsProject = ({client, market, abt, reader}) => {
   const [myABTs, setMyABTs] = useState([])

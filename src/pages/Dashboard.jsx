@@ -10,6 +10,7 @@ import Loader from "../components/Loader";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import Addresses from '../../utils/deploymentMap/31337.json';
+import { BACKEND_URL } from "../utilities/BackendURL";
 
 const Dashboard = ({ client, market, abt, reader }) => {
   const [revenueTime, setRevenueTime] = useState('Yearly');
@@ -34,11 +35,11 @@ const Dashboard = ({ client, market, abt, reader }) => {
         usdPennyValue: (parseInt(proceeds.usdPennyValue) / 100).toFixed(2)
       });
 
-      const soldResponse = await getSoldABTs(client.account);
+      const soldResponse = await getSoldABTs(client.account, client.chainId);
       setSoldABTs(soldResponse.soldABTs);
       setLastSaleDate(soldResponse.lastSaleDate ? calculateTimeSince(soldResponse.lastSaleDate) : 'Never');
 
-      const revenueResponse = await getGrossRevenue(client.account);
+      const revenueResponse = await getGrossRevenue(client.account, client.chainId);
       setGrossRevenue(revenueResponse.grossRevenue / 100); // Assuming the revenue is in pennies
       setInflowPercentage(revenueResponse.inflowPercentage);
       setTenProceeds(revenueResponse.tenProceeds); // Set the last ten proceeds
@@ -54,13 +55,16 @@ const Dashboard = ({ client, market, abt, reader }) => {
           tokenId: ids[index]
         }));
         const userListings = listingsWithTokenId.filter(listing => listing[0].toLowerCase() === client.account.toLowerCase());
-      
-        const abtMetadata = await fetchABTs(userListings.map(listing => listing.tokenId), client.chainId);
-        const listingsWithMetadata = userListings.map(listing => ({
-          ...listing,
-          metadata: abtMetadata.find(metadata => metadata.onChainID === listing.tokenId)
-        }));
-        setUserListings(listingsWithMetadata);
+        
+        if (userListings.length > 0) {
+          const abtMetadata = await fetchABTs(userListings.map(listing => listing.tokenId), client.chainId);
+          const listingsWithMetadata = userListings.map(listing => ({
+            ...listing,
+            metadata: abtMetadata.find(metadata => metadata.onChainID === listing.tokenId)
+          }));
+          setUserListings(listingsWithMetadata);
+
+        }
       }
 
     } catch (error) {
@@ -88,7 +92,7 @@ const Dashboard = ({ client, market, abt, reader }) => {
 
   const handleExportData = async () => {
     try {
-      await exportMarketplaceData(client.account);
+      await exportMarketplaceData(client.account, client.chainId);
       console.log('Marketplace data exported successfully');
     } catch (error) {
       console.error('Error exporting marketplace data:', error);
@@ -237,8 +241,8 @@ const GraphContainer = ({ title, proceeds, listings }) => {
             <tbody>
               {proceeds && proceeds.map((proceed, index) => (
                 <tr key={index}>
-                  <td className="border py-2 px-4 border-0">${Number(proceed.usdPennyValue) / 100}</td>
-                  <td className="border py-2 px-4 border-0">{calculateTimeSince(proceed.timestamp)}</td>
+                  <td className="py-2 px-4 border-0">${Number(proceed.usdPennyValue) / 100}</td>
+                  <td className="py-2 px-4 border-0">{calculateTimeSince(proceed.timestamp)}</td>
                 </tr>
               ))}
             </tbody>
@@ -257,12 +261,12 @@ const GraphContainer = ({ title, proceeds, listings }) => {
             <tbody>
               {listings && listings.map((listing, index) => (
                 <tr key={index} className="cursor-pointer hover:bg-gray-200" onClick={() => handleRowClick(listing.tokenId)}>
-                  <td className="border py-2 px-4 border-0 text-center">
-                    <img src={`http://localhost:3000/uploads/${listing.metadata.images[0]}`} alt={listing.metadata.name} style={{ margin: 'auto', width: 'auto', height: '100px' }} />
+                  <td className="py-2 px-4 border-0 text-center">
+                    <img src={`${BACKEND_URL}/uploads/${listing.metadata.images[0]}`} alt={listing.metadata.name} style={{ margin: 'auto', width: 'auto', height: '100px' }} />
                   </td>
-                  <td className="border py-2 px-4 border-0 text-center">{listing.tokenId}</td>
-                  <td className="border py-2 px-4 border-0 text-center" style={{ width: '40%' }}>{listing.metadata.name}</td>
-                  <td className="border py-2 px-4 border-0 text-center">${(Number(listing[1]) / 100).toLocaleString()}</td>
+                  <td className="py-2 px-4 border-0 text-center">{listing.tokenId}</td>
+                  <td className="py-2 px-4 border-0 text-center" style={{ width: '40%' }}>{listing.metadata.name}</td>
+                  <td className="py-2 px-4 border-0 text-center">${(Number(listing[1]) / 100).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -304,8 +308,8 @@ const DesktopGraphContainer = ({ proceeds, histogramChartData, chartOptions }) =
               <tbody>
                 {proceeds && proceeds.map((proceed, index) => (
                   <tr key={index} className="border-0 border-slate-300">
-                    <td className="border py-2 px-4 border-0 text-center">${(proceed.usdPennyValue / 100).toFixed(2)}</td>
-                    <td className="border py-2 px-4 border-0 text-center">{calculateTimeSince(proceed.timestamp)}</td>
+                    <td className="py-2 px-4 border-0 text-center">${(proceed.usdPennyValue / 100).toFixed(2)}</td>
+                    <td className="py-2 px-4 border-0 text-center">{calculateTimeSince(proceed.timestamp)}</td>
                   </tr>
                 ))}
               </tbody>
