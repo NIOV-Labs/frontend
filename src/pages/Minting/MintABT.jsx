@@ -34,11 +34,14 @@ const MintABT = ({ client, setOpenMint }) => {
     const handleMinting = async (e) => {
         e.preventDefault();
 
-        if (!name  || !document1Uploaded || !document2Uploaded) return;
         setIsMintingLoading(true)
         const formData = new FormData(event.target);
         const abtName = formData.get("name");
         const description = formData.get("description");
+        if (!abtName || !document1Uploaded || !document2Uploaded || !description) {
+          setIsMintingLoading(false); 
+          return; 
+        }
         
         const data = {
             "user_address": client.account,
