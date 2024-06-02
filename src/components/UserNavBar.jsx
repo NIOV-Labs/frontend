@@ -12,11 +12,16 @@ import AccountInfoDropDown from './AccountInfoDropDown';
 
 
 
-const UserNavBar = ({client}) => {
+const UserNavBar = ({client, setClient}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
   const [headerPosition, setHeaderPosition] = useState(0)
+
+  const disconnectWallet = () => {
+    setClient(null);
+    window.location.reload(); 
+  };
 
   const pageInfo = [
     {
@@ -58,9 +63,9 @@ const UserNavBar = ({client}) => {
 
   return (
     <>
-      <MobileNavBar client={client} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} isDiagnosticOpen={isDiagnosticOpen} setIsDiagnosticOpen={setIsDiagnosticOpen} pageInfo={pageInfo} setHeaderPosition={setHeaderPosition} />
-      <DesktopNavBar client={client} isOpen={isOpen} setIsOpen={setIsOpen} headerPosition={headerPosition} setHeaderPosition={setHeaderPosition} pageInfo={pageInfo} />
-      <WalletDiagnosticModal client={client} isOpen={isDiagnosticOpen} setIsOpen={setIsDiagnosticOpen}/>
+      <MobileNavBar client={client} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} isDiagnosticOpen={isDiagnosticOpen} setIsDiagnosticOpen={setIsDiagnosticOpen} pageInfo={pageInfo} setHeaderPosition={setHeaderPosition} disconnectWallet={disconnectWallet} />
+      <DesktopNavBar client={client} isOpen={isOpen} setIsOpen={setIsOpen} headerPosition={headerPosition} setHeaderPosition={setHeaderPosition} pageInfo={pageInfo} disconnectWallet={disconnectWallet} />
+      {/* <WalletDiagnosticModal client={client} isOpen={isDiagnosticOpen} setIsOpen={setIsDiagnosticOpen}/> */}
     </>
 
   )
@@ -68,7 +73,7 @@ const UserNavBar = ({client}) => {
 
 export default UserNavBar
 
-const MobileNavBar = ({client, isMenuOpen, setIsMenuOpen, setIsDiagnosticOpen, pageInfo, setHeaderPosition}) => {
+const MobileNavBar = ({client, isMenuOpen, setIsMenuOpen, setIsDiagnosticOpen, pageInfo, setHeaderPosition, disconnectWallet}) => {
   return (
     <nav className={`bg-[#F9FAFF] text-black flex flex-col items-center justify-start w-full absolute ${isMenuOpen && 'min-h-screen'} xl:hidden top-0 z-[50] left-0 right-0`}>
       <div className='h-[4.5rem] flex w-full  justify-between items-center px-5 py-6 border-b-2 border-slate-300'>
@@ -78,25 +83,26 @@ const MobileNavBar = ({client, isMenuOpen, setIsMenuOpen, setIsDiagnosticOpen, p
             </Link>
           </div>
           <div className='flex items-center justify-end gap-5'>
-              <div className='flex text-[#000]'>
+              {/* <div className='flex text-[#000]'>
                 {
                   client.account &&
                       <div className='text-black text-xl xl:text-2xl' onClick={() => setIsDiagnosticOpen(true)}>
                         <FaRegUser />
                       </div>
                 }
-              </div>
+              </div> */}
               <div className='text-2xl text-[#000] cursor-pointer' onClick={() => setIsMenuOpen(!isMenuOpen)}>
                 <IoMdMenu />
               </div>
           </div>
       </div>
-      { isMenuOpen && <DropdownMenu client={client} setIsMenuOpen={setIsMenuOpen} pageInfo={pageInfo} setHeaderPosition={setHeaderPosition}  />}
+      { isMenuOpen && <DropdownMenu client={client} setIsMenuOpen={setIsMenuOpen} pageInfo={pageInfo} setHeaderPosition={setHeaderPosition} disconnectWallet={disconnectWallet} />}
     </nav>
   )
 }
 
-const DropdownMenu  = ({ client, setIsMenuOpen, pageInfo, setHeaderPosition }) => {
+const DropdownMenu  = ({ client, setIsMenuOpen, pageInfo, setHeaderPosition, disconnectWallet }) => {
+
   return (
     <AnimatePresence>
         <motion.div initial={{ y: -100 }} animate={{ y: 0 }} exit={{ opacity: 0 }} className='flex-1 w-full flex flex-col justify-between xl:hidden'>
@@ -132,7 +138,7 @@ const DropdownMenu  = ({ client, setIsMenuOpen, pageInfo, setHeaderPosition }) =
                         )
                       })}
                     </div> */}
-                  <div className='w-full border-t-2 text-red-600 border-slate-300 px-5 py-3 flex justify-start items-center gap-2'>
+                  <div onClick={disconnectWallet} className='w-full border-t-2 text-red-600 border-slate-300 px-5 py-3 flex justify-start items-center gap-2'>
                       <div className='text-lg  cursor-pointer'>
                           <FiLogOut />
                       </div>
@@ -145,7 +151,7 @@ const DropdownMenu  = ({ client, setIsMenuOpen, pageInfo, setHeaderPosition }) =
   )
 }
 
-const DesktopNavBar = ({client, setIsOpen, headerPosition, setHeaderPosition, pageInfo, isOpen}) => {
+const DesktopNavBar = ({client, setIsOpen, headerPosition, setHeaderPosition, pageInfo, isOpen, disconnectWallet}) => {
   return (
     <>
       <nav className={`bg-[#F9FAFF] text-black hidden xl:flex flex-col items-center justify-start w-screen fixed top-0 z-[50] left-0 right-0`}>
@@ -194,12 +200,12 @@ const DesktopNavBar = ({client, setIsOpen, headerPosition, setHeaderPosition, pa
           </div>
         </div>
       </nav>
-    <SideMenu pageInfo={pageInfo} setHeaderPosition={setHeaderPosition} />
+    <SideMenu pageInfo={pageInfo} setHeaderPosition={setHeaderPosition} disconnectWallet={disconnectWallet} />
     </>
   )
 }
 
-const SideMenu = ({ pageInfo, setHeaderPosition}) => {
+const SideMenu = ({ pageInfo, setHeaderPosition, disconnectWallet}) => {
   return (
     <div style={{minHeight: 'calc(100% - 5rem)'}} className='absolute left-0 top-[5rem] w-72 2xl:w-80 bg-[#2C2B29] border-r- border-slate-300 hidden xl:flex flex-col justify-between items-start'>
       <div className='flex flex-col gap-3 text-black items-start px-10 py-7 w-full border-b-2 border-zinc-600'>
@@ -217,7 +223,7 @@ const SideMenu = ({ pageInfo, setHeaderPosition}) => {
               )
             })}
         </div> */}
-        <div className='w-full text-red-600  pl-10 py-7 flex justify-start items-center gap-2 cursor-pointer'>
+        <div onClick={disconnectWallet} className='w-full text-red-600  pl-10 py-7 flex justify-start items-center gap-2 cursor-pointer'>
             <div className='text-lg  cursor-pointer'>
                 <FiLogOut />
             </div>

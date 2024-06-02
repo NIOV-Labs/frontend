@@ -202,7 +202,7 @@ const ABTDetails = ({ client, market, abt }) => {
             <div className="w-full pb-2 lg:col-span-2">
                 <h1 className="text-2xl xl:text-3xl font-semibold">{abtInfo.name}</h1>
             </div>
-            <ImageCarousel imgs={abtInfo.images.length > 1 ? abtInfo.images : [abtInfo.document1image]} />
+            <ImageCarousel imgs={abtInfo.images.length > 0 ? abtInfo.images : [abtInfo.document1image]} />
             <div>
                 <Accordian owner={abtInfo.owner.slice(0, 5) + '...' + abtInfo.owner.slice(38, 42)} description={abtInfo.description} details={abtInfo.details} link={abtInfo.document1Link} />
                 {abtInfo.isOwner ? (
