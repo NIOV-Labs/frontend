@@ -46,7 +46,7 @@ const MintABT = ({ client, setOpenMint }) => {
             "metadata": {
                 "name": abtName,
                 "description": description, 
-                "externalURL": "http://localhost:5173/", 
+                "externalURL": "https://beta.niovlabs.io", 
                 "images": imageViewPaths,
                 'document1': document1FilePath,
                 'document2': document2FilePath,

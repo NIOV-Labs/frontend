@@ -9,7 +9,7 @@ import DropDownMenu from "../components/DropDownMenu";
 import GridOption from "../components/GridOption";
 import MarketCard from "../components/MarketCard";
 
-const dataURL = 'http://localhost:3000/uploads/'
+const dataURL = 'https://beta.niovlabs.io/uploads/'
 
 const Marketplace = ({ abt, market, client, reader }) => {
   const [abts, setAbts] = useState([]);

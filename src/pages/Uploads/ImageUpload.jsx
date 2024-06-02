@@ -3,8 +3,8 @@ import axios from "axios";
 import Loader from "../../components/Loader";
 import { FaCheck } from "react-icons/fa";
 
-const apiUrl = 'http://localhost:3000/api/upload';
-const dataURL = 'http://localhost:3000';
+const apiUrl = 'https://beta.niovlabs.io/api/upload';
+const dataURL = 'https://beta.niovlabs.io';
 const chunkSize = 10 * 1024;
 
 const ImageUpload = ({ label, setImageViewPaths, imageViewPaths, name }) => {
