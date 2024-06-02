@@ -31,7 +31,7 @@ const Dashboard = ({ client, market, abt, reader }) => {
       const proceeds = await market.checkProceeds(client.account);
       setUserProceeds({
         rawValue: (parseInt(proceeds.rawValue) / (10 ** 18)).toFixed(5),
-        usdPennyValue: (parseInt(proceeds.usdPennyValue.toString()) / 100).toFixed(2)
+        usdPennyValue: (parseInt(proceeds.usdPennyValue) / 100).toFixed(2)
       });
 
       const soldResponse = await getSoldABTs(client.account);
@@ -72,7 +72,6 @@ const Dashboard = ({ client, market, abt, reader }) => {
 
   const handleClaimingProceeds = async () => {
     try {
-      console.log(market);
       setLoadingProceeds(true);
       console.log(client);
       const tx = await market.withdrawProceeds();
@@ -127,7 +126,7 @@ const Dashboard = ({ client, market, abt, reader }) => {
     <>
       <PageHeader title={'Dashboard'} />
       <div className="w-full p-5 lg:p-10 grid grid-cols-1 min-[370px]:grid-cols-2 md:grid-cols-6 min-[1500px]:grid-cols-10 gap-4">
-        <ABTContainer title={'Unclaimed Proceeds'} value={`$${userProceeds.usdPennyValue.toLocaleString()}`} badgeValue={`${userProceeds.rawValue} Ξ`} funds={userProceeds.rawValue !== 0} loading={loading} loadingProceeds={loadingProceeds} handleClaim={handleClaimingProceeds} />
+        <ABTContainer title={'Unclaimed Proceeds'} value={`$${userProceeds.usdPennyValue}`} badgeValue={`${userProceeds.rawValue} Ξ`} funds={userProceeds.rawValue > 0} loading={loading} loadingProceeds={loadingProceeds} handleClaim={handleClaimingProceeds} />
         <ABTContainer title={'Total ABTs sold'} value={soldABTs} badgeValue={lastSaleDate} />
         <ABTContainer title={'Gross Revenue'} value={'$' + grossRevenue.toLocaleString()} badgeValue={`${inflowPercentage ? inflowPercentage.toFixed(2) : 0}%`} handleExport={handleExportData} />
         <GraphContainer title={`Proceeds`} proceeds={tenProceeds} />
