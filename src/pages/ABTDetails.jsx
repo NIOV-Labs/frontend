@@ -7,8 +7,9 @@ import Loader from '../components/Loader';
 import ImageCarousel from '../components/ImageCarousel';
 import LoaderTwo from '../components/LoaderTwo';
 import { ethers } from 'ethers';
+import { BACKEND_URL } from '../utilities/BackendURL';
 
-const dataURL = 'http://localhost:3000/uploads/'
+const dataURL = `${BACKEND_URL}/uploads/`
 
 const ABTDetails = ({ client, market, abt }) => {
   const { id } = useParams();

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 const MarketCard = ({abt}) => {
   const imageUrl = abt.images && abt.images.length > 0 ? abt.images[0] : abt.document1image;
+//   console.log(imageUrl)
 
   return (
     <Link to={`/abt/${abt.tokenId}`} className="bg-white border-[1px] overflow-hidden cursor-pointer border-gray-200 rounded shadow  flex flex-col justify-between items-center">

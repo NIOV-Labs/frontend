@@ -44,19 +44,20 @@ const MintABT = ({ client, setOpenMint }) => {
         }
         
         const data = {
-            "user_address": client.account,
-            "network": 31337,
-            "metadata": {
-                "name": abtName,
-                "description": description, 
-                "externalURL": "http://localhost:5173/", 
-                "images": imageViewPaths,
-                'document1': document1FilePath,
-                'document2': document2FilePath,
-            }
+          "user_address": client.account,
+          "network": client.chainId,
+          "metadata": {
+            "name": abtName,
+            "description": description, 
+            "externalURL": "https://beta.niovlabs.io", //for displaying abt
+            "images": imageViewPaths,
+            'document1': document1FilePath,
+            'document2': document2FilePath,
+          }
         }  
+        console.log({data})
         try {
-            const response = await createABT(data);
+            const response = await createABT(data, client.chainId);
             console.log(response)
             const tokenId = response.tokenId
             navigate(`/abt/${tokenId}`);
