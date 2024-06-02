@@ -33,11 +33,11 @@ const Dashboard = ({ client, market, abt, reader }) => {
         usdPennyValue: (parseInt(proceeds.usdPennyValue) / 100).toFixed(2)
       });
 
-      const soldResponse = await getSoldABTs(client.account);
+      const soldResponse = await getSoldABTs(client.account, client.chainId);
       setSoldABTs(soldResponse.soldABTs);
       setLastSaleDate(soldResponse.lastSaleDate ? calculateTimeSince(soldResponse.lastSaleDate) : 'Never');
 
-      const revenueResponse = await getGrossRevenue(client.account);
+      const revenueResponse = await getGrossRevenue(client.account, client.chainId);
       setGrossRevenue(revenueResponse.grossRevenue / 100); // Assuming the revenue is in pennies
       setInflowPercentage(revenueResponse.inflowPercentage);
       setTenProceeds(revenueResponse.tenProceeds); // Set the last ten proceeds
@@ -89,7 +89,7 @@ const Dashboard = ({ client, market, abt, reader }) => {
 
   const handleExportData = async () => {
     try {
-      await exportMarketplaceData(client.account);
+      await exportMarketplaceData(client.account, client.chainId);
       console.log('Marketplace data exported successfully');
     } catch (error) {
       console.error('Error exporting marketplace data:', error);
