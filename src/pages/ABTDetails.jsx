@@ -211,7 +211,7 @@ const ABTDetails = ({ client, market, abt }) => {
                             <div className='w-full flex flex-col gap-4 justify-center items-center'>
                                 <div className='w-full flex justify-center items-center gap-2 sm:flex-row sm:gap-4'>
                                     <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>
-                                        <p className='text-gray-700 text-md lg:text-lg font-bold'>{abtInfo.priceGas}</p>
+                                        <p className='text-gray-700 text-md lg:text-lg font-bold'>{abtInfo.priceGas} Ξ</p>
                                         <p className='text-gray-700 text-sm xl:text-md font-medium leading-3'>Gas</p>
                                     </div>
                                     <div className='flex flex-col gap-1 justify-center items-center p-4 lg:p-6 shadow-lg w-max rounded-lg'>

@@ -45,7 +45,7 @@ const CardCarousel = () => {
       setOffset((pv) => (pv -= CARD_SIZE));
     };
   return (
-    <div className='bg-slate-100 w-full px-5 py-10 md:py-12 lg:py-14 2xl:py-16'>
+    <div className='bg-slate-100 w-full px-5 md:px-10 py-10 md:py-12 lg:py-14 2xl:py-16'>
         <div className="relative overflow-hidden min-[2000px]:hidden">
             <div className='w-full flex justify-center mb-5 lg:mb-6 2xl:mb-7'>
                 <div className='flex items-center justify-start w-full'>
@@ -70,7 +70,7 @@ const CardCarousel = () => {
             animate={{
               x: CAN_SHIFT_LEFT ? "0%" : "-100%",
             }}
-            className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-100/30 p-3 pl-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pl-3"
+            className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-400/30 p-3 pl-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pl-3"
             onClick={shiftLeft}
           >
             <FiChevronLeft />
@@ -80,7 +80,7 @@ const CardCarousel = () => {
             animate={{
               x: CAN_SHIFT_RIGHT ? "0%" : "100%",
             }}
-            className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-100/30 p-3 pr-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pr-3"
+            className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-400/30 p-3 pr-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pr-3"
             onClick={shiftRight}
           >
             <FiChevronRight />
