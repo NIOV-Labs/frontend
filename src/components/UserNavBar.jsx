@@ -177,9 +177,9 @@ const DesktopNavBar = ({client, setIsOpen, headerPosition, setHeaderPosition, pa
                         <FiChevronDown />
                     </div> */}
                 </div>
-                <div className='text-black text-3xl 2xl:text-4xl'>
+                {/* <div className='text-black text-3xl 2xl:text-4xl'>
                   <MdCircleNotifications />
-                </div>
+                </div> */}
                 <div className=' flex justify-start items-center gap-3 cursor-pointer relative' onClick={() => setIsOpen(!isOpen)}>
                     <div className='text-[1.6rem] 2xl:text-[2rem] text-[#000]'>
                         <FaUserCircle />
