@@ -96,7 +96,7 @@ function App() {
       <div className='flex justify-start items-start min-h-[100vh] min-w-screen relative w-full'>
         {client.account ? (
           <>
-            <UserNavBar client={client} />
+            <UserNavBar client={client} setClient={setClient} />
             <main className='mt-[4.5rem] lg:mt-[5rem] xl:ml-72 2xl:ml-80 relative w-full'>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard client={client} market={market} abt={abt} reader={reader} />} />
