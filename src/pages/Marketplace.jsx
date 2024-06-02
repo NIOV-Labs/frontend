@@ -63,7 +63,7 @@ const Marketplace = ({ abt, market, client, reader }) => {
           'seller': abtListingInfo[index].seller,
           priceUsd: parseInt(abtListingInfo[index].usdPennyPrice) / 100,
           priceGas: parseInt(abtListingInfo[index].rawValueGas)  / (10**18),
-          tokenId: ids[index],
+          tokenId: processedMetadata[index]?.onChainID,
           owner: owners[index]
           // rawValueTkn: parseInt(abtListingInfo[index].rawValueTkn)
         }));
