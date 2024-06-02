@@ -217,12 +217,12 @@ const GraphContainer = ({ title, proceeds, listings }) => {
             <MdArrowForwardIos />
           </div>
         </div>
-        {activeListing && (
+        {/* {activeListing && (
           <div className="flex gap-2 md:gap-6 justify-end items-center">
             <DropDownMenu Icon={MdFilterList} flexDirection={'flex-row-reverse'} title={'Filter'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
             <DropDownMenu Icon={HiAdjustmentsHorizontal} flexDirection={'flex-row-reverse'} title={'Sort'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />
           </div>
-        )}
+        )} */}
         {pending && <DropDownMenu Icon={MdFilterList} flexDirection={'flex-row-reverse'} title={'Filter'} options={['Yearly', 'Monthly', 'Weekly', 'Daily']} />}
       </div>
       <div className="w-full">
