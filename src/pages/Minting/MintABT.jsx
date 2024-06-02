@@ -42,7 +42,7 @@ const MintABT = ({ client, setOpenMint }) => {
         
         const data = {
             "user_address": client.account,
-            "network": 31337,
+            "network": client.chainId,
             "metadata": {
                 "name": abtName,
                 "description": description, 
