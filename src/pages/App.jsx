@@ -26,7 +26,7 @@ function App() {
   });
   const [hasWeb3, setHasWeb3] = useState(false);
   const [abt, setAbt] = useState({});
-  const [market, setMarket] = useState([]);
+  const [market, setMarket] = useState({});
   const [reader, setReader] = useState({});
 
   const web3Handler = async () => {

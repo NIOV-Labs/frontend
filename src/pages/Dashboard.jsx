@@ -10,6 +10,7 @@ import Loader from "../components/Loader";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { BACKEND_URL } from "../utilities/BackendURL";
+import PageLoader from './PageLoader'
 
 const Dashboard = ({ client, market, abt, reader }) => {
   const [revenueTime, setRevenueTime] = useState('Yearly');
@@ -28,6 +29,7 @@ const Dashboard = ({ client, market, abt, reader }) => {
   const loadDashboardItems = async () => {
     try {
       setLoading(true);
+      console.log(market)
       const proceeds = await market.checkProceeds(client.account);
       setUserProceeds({
         rawValue: (parseInt(proceeds.rawValue) / (10 ** 18)).toFixed(5),
@@ -100,11 +102,13 @@ const Dashboard = ({ client, market, abt, reader }) => {
   };
 
   useEffect(() => {
-    loadDashboardItems();
-    const interval = setInterval(loadDashboardItems, 30000); // Refresh every 45 seconds
+    if (Object.keys(market).length > 0) {
+      loadDashboardItems();
+      const interval = setInterval(loadDashboardItems, 30000); // Refresh every 30 seconds
 
-    return () => clearInterval(interval);
-  }, []);
+      return () => clearInterval(interval);
+    }
+  }, [market]);
 
   const histogramChartData = {
     labels: histogramData.map(item => item.date),
