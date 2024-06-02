@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import { fetchABTs } from "../utilities/Contract";
-import Addresses from '../../utils/deploymentMap/31337.json'
 import PageLoader from "./PageLoader"
 import ActiveSection from "../components/ActiveSection";
 import { MdFilterList } from "react-icons/md";
@@ -46,6 +45,8 @@ const Marketplace = ({ abt, market, client, reader }) => {
             document1Link: `${dataURL}${metadata.document1}`
           };
         });
+        
+        const Addresses = await import(`../../utils/deploymentMap/${client.chainId}.json`);
 
         //call to smart contracts for listing info
         const abtListingInfo = await reader.readListings(Addresses.AssetBoundToken, ids);
