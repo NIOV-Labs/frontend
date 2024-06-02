@@ -9,7 +9,7 @@ import LoaderTwo from '../components/LoaderTwo';
 import { ethers } from 'ethers';
 import { BACKEND_URL } from '../utilities/BackendURL';
 
-const dataURL = `${BACKEND_URL}/uploads/`
+const dataURL = `${BACKEND_URL}/api/uploads/`
 
 const ABTDetails = ({ client, market, abt }) => {
   const { id } = useParams();
