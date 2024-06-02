@@ -41,7 +41,7 @@ const Home = ({client, web3Handler, hasWeb3}) => {
   return (
     <>
       <HomeNavBar client={client} hasWeb3={hasWeb3} web3Handler={web3Handler}/>
-      <div className='mt-[4.5rem] md:mt-24 w-full mx-auto flex flex-col justify-center items-center lg:gap-10 overflow-hidden'>
+      <div className='w-full mx-auto flex flex-col justify-center items-center lg:gap-10 overflow-hidden'>
         <Hero hasWeb3={hasWeb3} web3Handler={web3Handler} />
         {cardInfo.map((card, index) => {
           return (

@@ -4,7 +4,7 @@ import { Button } from "react-bootstrap"
 
 const Hero = ({ web3Handler, hasWeb3}) => {
   return (
-    <div className="w-full flex justify-center bg-gradient-to-tr from-white via-[#D7E7F4] to-white relative ">
+    <div className="w-full flex justify-center bg-gradient-to-tr from-white via-[#D7E7F4] to-white relative pt-[4.5rem] md:pt-24">
       <div className="relative overflow-hidden w-full max-w-7xl flex flex-col justify-center items-start gap-4 px-5 md:px-10 py-10 sm:py-16 md:py-20 lg:py-32 2xl:py-40">
           <div className="w-full flex flex-col justify-start items-start gap-2 relative z-20">
               <p className="text-sm lg:text-md xl:text-lg text-zinc-600 font-medium tracking-wide">Asset Bound Tokens (ABTs)</p>
