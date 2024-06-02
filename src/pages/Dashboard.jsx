@@ -59,12 +59,18 @@ const Dashboard = ({ client, market, abt, reader }) => {
         
         if (userListings.length > 0) {
           const abtMetadata = await fetchABTs(userListings.map(listing => listing.tokenId), client.chainId);
-          const listingsWithMetadata = userListings.map(listing => ({
-            ...listing,
-            metadata: abtMetadata.find(metadata => metadata.onChainID === listing.tokenId)
-          }));
+          const listingsWithMetadata = userListings.map(listing => {
+            const metadata = abtMetadata.find(metadata => metadata.onChainID === listing.tokenId);
+            if (metadata && metadata.images && metadata.images.length === 0 && metadata.document1) {
+              metadata.images = [`${metadata.document1.replace('.pdf', '.jpg')}`];
+            }
+            return {
+              ...listing,
+              metadata
+            };
+          });
           setUserListings(listingsWithMetadata);
-
+          console.log(listingsWithMetadata)
         }
       }
 
