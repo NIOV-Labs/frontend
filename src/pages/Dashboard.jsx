@@ -9,7 +9,6 @@ import { getSoldABTs, getGrossRevenue, exportMarketplaceData, fetchABTs } from "
 import Loader from "../components/Loader";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
-import Addresses from '../../utils/deploymentMap/31337.json';
 
 const Dashboard = ({ client, market, abt, reader }) => {
   const [revenueTime, setRevenueTime] = useState('Yearly');
@@ -48,7 +47,9 @@ const Dashboard = ({ client, market, abt, reader }) => {
       const numTokens = parseInt(tokens);
       if (numTokens > 0) {
         const ids = Array.from({ length: numTokens }, (_, index) => index + 1);
-        const abtListingInfo = await reader.readListings(Addresses.AssetBoundToken, ids);
+        const addresses = await import(`../../utils/deploymentMap/${client.chainId}.json`);
+
+        const abtListingInfo = await reader.readListings(addresses.AssetBoundToken, ids);
         const listingsWithTokenId = abtListingInfo.map((listing, index) => ({
           ...listing,
           tokenId: ids[index]
