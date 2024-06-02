@@ -86,7 +86,7 @@ const ABTsProject = ({client, market, abt, reader}) => {
 
   useEffect(() => {
     loadMyAbts();
-    const interval = setInterval(loadMyAbts, 45000); // Refresh every 45 seconds
+    const interval = setInterval(loadMyAbts, 30000); // Refresh every 45 seconds
 
     return () => clearInterval(interval);
   }, []); 

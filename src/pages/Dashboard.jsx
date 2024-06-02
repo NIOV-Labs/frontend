@@ -97,7 +97,7 @@ const Dashboard = ({ client, market, abt, reader }) => {
 
   useEffect(() => {
     loadDashboardItems();
-    const interval = setInterval(loadDashboardItems, 45000); // Refresh every 45 seconds
+    const interval = setInterval(loadDashboardItems, 30000); // Refresh every 45 seconds
 
     return () => clearInterval(interval);
   }, []);
