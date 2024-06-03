@@ -24,17 +24,24 @@ const ABTsProject = ({client, market, abt, reader}) => {
   const [loading, setLoading] = useState(true)
 
   const loadMyAbts = async () => {
-    try { 
-      const results = await reader.abtListingsOf(abt.target, client.signer.address)
+    try {
+      const results = await reader.abtListingsOf(abt.target, client.signer.address);
       if (results.tokenIds.length > 0) {
-        const tokenIds = results.tokenIds
-        const tokenArray = Object.values(tokenIds).map(value => parseInt(value));
-        const abtMetadata = await fetchABTs(tokenArray, client.chainId);
-
+        const tokenIds = results.tokenIds.map(id => parseInt(id));
+        const abtMetadata = await fetchABTs(tokenIds, client.chainId);
+  
+        if (!abtMetadata || !Array.isArray(abtMetadata) || abtMetadata.length === 0) {
+          throw new Error('Invalid or empty metadata response');
+        }
+  
         const processedMetadata = abtMetadata.map(metadata => {
+          if (!metadata || !metadata.images || !metadata.document1 || metadata.onChainID === undefined) {
+            throw new Error('Invalid metadata structure');
+          }
+  
           const updatedImages = metadata.images.map(image => `${dataURL}${image}`);
           const document1image = metadata.document1.replace('.pdf', '.jpg');
-
+  
           return {
             ...metadata,
             images: updatedImages,
@@ -42,29 +49,45 @@ const ABTsProject = ({client, market, abt, reader}) => {
             document1Link: `${dataURL}${metadata.document1}`
           };
         });
-        
-        const listingData = results.listingData 
-        const combinedData = listingData.map((listing, index) => ({
-          ...processedMetadata[index],
-          tokenId: tokenArray[index],
-          seller: listing.seller,
-          priceUsd: parseInt(listing.usdPennyPrice) / 100,
-          name: abtMetadata[index].name,
-          owner: client.signer.address
-        }));
-        // console.log(combinedData);
   
-        // Update the states
+        const metadataMap = new Map(processedMetadata.map(metadata => [metadata.onChainID, metadata]));
+  
+        const listingData = results.listingData.map((listing, index) => ({
+          ...listing,
+          tokenId: tokenIds[index]
+        }));
+  
+        const combinedData = listingData.reduce((acc, listing) => {
+          const metadata = metadataMap.get(listing.tokenId);
+          if (metadata) {
+            acc.push({
+              ...metadata,
+              tokenId: listing.tokenId,
+              seller: listing.seller,
+              priceUsd: parseInt(listing[1]) / 100,
+              name: metadata.name || 'Unknown Name',
+              owner: client.signer.address
+            });
+          } else {
+            console.warn(`No metadata found for tokenId ${listing.tokenId}`);
+          }
+          return acc;
+        }, []);
+        console.log(combinedData);
         setMyABTs(combinedData);
         setDisplayedAbts(combinedData);
+      } else {
+        setMyABTs([]);
+        setDisplayedAbts([]);
       }
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error('Error loading my items:', error);
-      // await new Promise((resolve) => setTimeout(resolve, 500));
-      // await loadMyAbts()
+      setLoading(false);
     }
-  }
+  };
+  
+  
 
   const updateFilter = () => {
     if (abtFilter === 2) {
