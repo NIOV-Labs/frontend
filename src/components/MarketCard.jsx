@@ -25,7 +25,7 @@ const MarketCard = ({abt}) => {
                     <div className='flex justify-start gap-1 items-center'>
                         <p className='text-sm lg:text-md text-stone-500'>Price</p>
                     </div>
-                    <h1 className="text-lg lg:text-xl">$ {abt.priceUsd}</h1>
+                    <h1 className="text-lg lg:text-xl">$ {abt.priceUsd.toLocaleString()}</h1>
                 </div>
             }
         </div>
