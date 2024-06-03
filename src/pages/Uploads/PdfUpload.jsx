@@ -69,8 +69,8 @@ const Upload = ({ label, setPdfFile, pdfFile, setUploaded, uploaded, name, setPd
                 if (lastChunk) {
                     let filePath = response.data.file.replace(/^\.\//, '/');
                     let imagePath = response.data.image.replace(/^\.\//, '/')
-                    filePath = `${dataURL}${filePath}`
-                    imagePath = `${dataURL}${imagePath}`
+                    filePath = `${dataURL}/api${filePath}`
+                    imagePath = `${dataURL}/api${imagePath}`
                     console.log("Document Sent!");
                     // console.log('image path:', imagePath)
                     // console.log('file path:', filePath)

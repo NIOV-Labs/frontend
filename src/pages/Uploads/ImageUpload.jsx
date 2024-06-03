@@ -66,7 +66,7 @@ const ImageUpload = ({ label, setImageViewPaths, imageViewPaths, name }) => {
                 const lastChunk = (chunkNum === totalChunks);
                 if (lastChunk) {
                     let imagePath = response.data.file.replace(/^\.\//, '/');
-                    imagePath =   `${dataURL}${imagePath}`
+                    imagePath =   `${dataURL}/api${imagePath}`
                     console.log(imagePath)
                     setImageViewPaths((prev) => [...prev, imagePath]);
                     setUploaded(true);
