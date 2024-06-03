@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
-import logo from '../assets/Logo.png'
-import whiteLogo from '../assets/LogoWhite.png'
+import logo from '../assets/NavLogo.svg'
+import whiteLogo from '../assets/WhiteNavLogo.svg'
 import { IoMdMenu, IoMdSettings } from "react-icons/io";
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -79,7 +79,7 @@ const MobileNavBar = ({client, isMenuOpen, setIsMenuOpen, setIsDiagnosticOpen, p
       <div className='h-[4.5rem] flex w-full  justify-between items-center px-5 py-6 border-b-2 border-slate-300'>
           <div className='flex items-center justify-center'>
             <Link to="/dashboard">
-              <img src={logo} alt="Logo" className="w-[7rem] sm:w-32" />
+              <img src={logo} alt="Logo" className="w-[8rem] sm:w-44" />
             </Link>
           </div>
           <div className='flex items-center justify-end gap-5'>
@@ -159,7 +159,7 @@ const DesktopNavBar = ({client, setIsOpen, headerPosition, setHeaderPosition, pa
           <div className='flex items-center justify-start h-full border-b-2 border-zinc-600'>
             <div className=' bg-[#2C2B29] flex items-center justify-start h-full pl-10 py-6 w-72 2xl:w-80'>
               <Link to="/dashboard">
-                <img src={whiteLogo} alt="Logo" className="w-[7rem] lg:w-36 2xl:w-40" />
+                <img src={whiteLogo} alt="Logo" className="w-[7rem] lg:w-44 2xl:w-54" />
               </Link>
             </div>
             {/* <div className='pl-10'>

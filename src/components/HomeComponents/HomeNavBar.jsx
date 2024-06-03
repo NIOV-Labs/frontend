@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import logo from '../../assets/Logo.png'
+import NavLogo from '../../assets/NavLogo.svg'
 import { Button } from 'react-bootstrap'
 import { useState } from 'react'
 import { useMotionValueEvent, useScroll, motion } from 'framer-motion'
@@ -30,7 +30,7 @@ const HomeNavBar = ({ web3Handler, hasWeb3}) => {
       >
         <div className='flex items-center justify-center'>
           <Link to="/">
-            <img src={logo} alt="Logo" className="w-[7rem] sm:w-32 md:w-40 object-contain" />
+            <img src={NavLogo} alt="Logo" className="w-[8rem] sm:w-44 md:w-56 object-contain" />
           </Link>
         </div>
         <div className='flex gap-5 text-[#000]'>
