@@ -57,13 +57,14 @@ const Marketplace = ({ abt, market, client, reader }) => {
         const ownerPromises = ids.map(id => abt.ownerOf(id));
         const owners = await Promise.all(ownerPromises);
 
+        processedMetadata.sort((a, b) => a.onChainID - b.onChainID);
         //below code is to combine both arrays for easier display into one single object for each abt instead of two separate objects. 
         const combinedData = processedMetadata.map((metadata, index) => ({
           ...metadata,
           'seller': abtListingInfo[index].seller,
           priceUsd: parseInt(abtListingInfo[index].usdPennyPrice) / 100,
           priceGas: parseInt(abtListingInfo[index].rawValueGas)  / (10**18),
-          tokenId: processedMetadata[index]?.onChainID,
+          tokenId: ids[index],
           owner: owners[index]
           // rawValueTkn: parseInt(abtListingInfo[index].rawValueTkn)
         }));

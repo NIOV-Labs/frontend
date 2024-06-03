@@ -27,17 +27,15 @@ const ABTsProject = ({client, market, abt, reader}) => {
     try {
       const results = await reader.abtListingsOf(abt.target, client.signer.address);
       if (results.tokenIds.length > 0) {
-        const tokenIds = results.tokenIds;
-        const tokenArray = Object.values(tokenIds).map(value => parseInt(value));
-        
-        const abtMetadata = await fetchABTs(tokenArray, client.chainId);
+        const tokenIds = results.tokenIds.map(id => parseInt(id));
+        const abtMetadata = await fetchABTs(tokenIds, client.chainId);
   
         if (!abtMetadata || !Array.isArray(abtMetadata) || abtMetadata.length === 0) {
           throw new Error('Invalid or empty metadata response');
         }
   
         const processedMetadata = abtMetadata.map(metadata => {
-          if (!metadata || !metadata.images || !metadata.document1) {
+          if (!metadata || !metadata.images || !metadata.document1 || metadata.onChainID === undefined) {
             throw new Error('Invalid metadata structure');
           }
   
@@ -52,40 +50,30 @@ const ABTsProject = ({client, market, abt, reader}) => {
           };
         });
   
-        const listingData = results.listingData;
-        if (!listingData || listingData.length !== processedMetadata.length) {
-          console.warn('Mismatch between listing data and metadata lengths', {
-            listingDataLength: listingData.length,
-            processedMetadataLength: processedMetadata.length
-          });
+        const metadataMap = new Map(processedMetadata.map(metadata => [metadata.onChainID, metadata]));
   
-          // Filter out unmatched items
-          const filteredListings = listingData.filter((listing, index) => index < processedMetadata.length);
-  
-          const combinedData = filteredListings.map((listing, index) => ({
-            ...processedMetadata[index],
-            tokenId: processedMetadata[index]?.onChainID,
-            seller: listing.seller,
-            priceUsd: parseInt(listing.usdPennyPrice) / 100,
-            name: processedMetadata[index]?.name || 'Unknown Name',
-            owner: client.signer.address
-          }));
-  
-          setMyABTs(combinedData);
-          setDisplayedAbts(combinedData);
-          setLoading(false);
-          return;
-        }
-  
-        const combinedData = listingData.map((listing, index) => ({
-          ...processedMetadata[index],
-          tokenId: processedMetadata[index]?.onChainID,
-          seller: listing.seller,
-          priceUsd: parseInt(listing.usdPennyPrice) / 100,
-          name: processedMetadata[index]?.name || 'Unknown Name',
-          owner: client.signer.address
+        const listingData = results.listingData.map((listing, index) => ({
+          ...listing,
+          tokenId: tokenIds[index]
         }));
   
+        const combinedData = listingData.reduce((acc, listing) => {
+          const metadata = metadataMap.get(listing.tokenId);
+          if (metadata) {
+            acc.push({
+              ...metadata,
+              tokenId: listing.tokenId,
+              seller: listing.seller,
+              priceUsd: parseInt(listing[1]) / 100,
+              name: metadata.name || 'Unknown Name',
+              owner: client.signer.address
+            });
+          } else {
+            console.warn(`No metadata found for tokenId ${listing.tokenId}`);
+          }
+          return acc;
+        }, []);
+        console.log(combinedData);
         setMyABTs(combinedData);
         setDisplayedAbts(combinedData);
       } else {
@@ -98,6 +86,8 @@ const ABTsProject = ({client, market, abt, reader}) => {
       setLoading(false);
     }
   };
+  
+  
 
   const updateFilter = () => {
     if (abtFilter === 2) {
